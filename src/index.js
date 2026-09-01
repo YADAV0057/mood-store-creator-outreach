@@ -2,8 +2,29 @@
 
 import 'dotenv/config';
 import { readCompanies, writeOutreach, markAsProcessed } from './sheets.js';
-import { findAndScrape } from './trustpilot.js';
 import { generateEmail, analyzeReviewsWithAI } from './emailGen.js';
+
+/**
+ * PHASE 2 BRIDGE (2026-09-01): trustpilot.js is no longer called here. Creator
+ * discovery already ran upstream (n8n -> Apify/YouTube Data API -> Sheet1 columns
+ * G/J/K/L), so this just packages that already-present data into the `reviews`
+ * shape emailGen.js expects. TODO(Phase 3): replace this bridge + the emailGen.js
+ * prompt together with the real niche/bio personalization hook.
+ */
+function buildCreatorSignal(company) {
+  const parts = [];
+  if (company.nicheTags) parts.push(`Niche: ${company.nicheTags}`);
+  if (company.platform) parts.push(`Platform: ${company.platform}`);
+  if (company.subscribers) parts.push(`Followers/Subscribers: ${company.subscribers}`);
+  if (company.instagramHandle) parts.push(`Instagram: ${company.instagramHandle}`);
+
+  return [{
+    rating: '',
+    date: '',
+    title: company.nicheTags || 'creator profile',
+    text: parts.length > 0 ? parts.join(' | ') : 'No discovery data available for this creator.'
+  }];
+}
 
 const BANNER = `
 ╔═══════════════════════════════════════════════════════════════╗
@@ -21,39 +42,26 @@ async function processCompany(company) {
   console.log(`  Website: ${company.website}`);
 
   try {
-    // Step 1+2: Find Trustpilot page and scrape reviews in a single browser session
-    console.log('  [1/5] Searching Trustpilot and scraping reviews...');
-    const { trustpilot, reviews } = await findAndScrape(company.website, company.company, [1, 2], 20);
+    // Step 1: Read this creator's discovery data — already written to the sheet
+    // by the n8n weekly job, no live scrape needed.
+    console.log('  [1/5] Checking creator discovery data...');
 
-    if (!trustpilot.found) {
-      console.log('  ✗ No Trustpilot page found');
+    if (!company.nicheTags && !company.platform) {
+      console.log('  ✗ No discovery data (niche/platform) for this row');
       await writeOutreach({
         ceoName: company.ceoName,
         ceoEmail: company.email,
         company: company.company,
-        trustpilotUrl: '',
-        painPoints: 'No Trustpilot page found',
-        generatedEmail: 'N/A - Company not on Trustpilot',
-        status: 'Skipped - No Trustpilot'
+        trustpilotUrl: company.website || '',
+        painPoints: 'No discovery data found',
+        generatedEmail: 'N/A - No niche/platform data from discovery pipeline',
+        status: 'Skipped - No Discovery Data'
       });
-      return { success: true, skipped: true, reason: 'No Trustpilot page' };
+      return { success: true, skipped: true, reason: 'No discovery data' };
     }
 
-    console.log(`  ✓ Found: ${trustpilot.url}`);
-    console.log(`  Found ${reviews.length} negative reviews`);
-
-    if (reviews.length === 0) {
-      await writeOutreach({
-        ceoName: company.ceoName,
-        ceoEmail: company.email,
-        company: company.company,
-        trustpilotUrl: trustpilot.url,
-        painPoints: 'No negative reviews found',
-        generatedEmail: 'N/A - No pain points to address',
-        status: 'Skipped - No negative reviews'
-      });
-      return { success: true, skipped: true, reason: 'No negative reviews' };
-    }
+    console.log(`  ✓ Niche: ${company.nicheTags || 'n/a'} | Platform: ${company.platform || 'n/a'} | Followers: ${company.subscribers || 'n/a'}`);
+    const reviews = buildCreatorSignal(company);
 
     // Step 3: Analyze pain points with AI
     console.log('  [3/5] Analyzing pain points...');
@@ -82,7 +90,7 @@ async function processCompany(company) {
       ceoName: company.ceoName,
       ceoEmail: company.email,
       company: company.company,
-      trustpilotUrl: trustpilot.url,
+      trustpilotUrl: company.website || '',
       painPoints,
       generatedEmail: emailResult,
       status: `Ready for review (Variant ${selectedVariant})`

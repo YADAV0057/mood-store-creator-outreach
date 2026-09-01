@@ -7,7 +7,6 @@ import { readFileSync, writeFileSync, existsSync, unlinkSync, chmodSync } from '
 import { readCompanies, readAllLeads, appendLeadsToSheet, clearLeadsFromSheet, writeOutreach, markAsProcessed, writeDraftToLead, getEmailRow, getAllEmails, updateStatus, updateScheduledTime, clearScheduledTime, findFirstUnprocessedRow, deleteLeadRow } from './sheets.js';
 import multer from 'multer';
 import { createDraft, createDraftWithSignature, updateDraft, deleteDraft, getMyEmail, findDraftByRecipientAndSubject, sendDraft, getGmailClient, getSendAsAddresses } from './gmail.js';
-import { findTrustpilotPage, scrapeReviews, extractPainPoints } from './trustpilot.js';
 import { generateEmail } from './emailGen.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -1327,16 +1326,24 @@ app.post('/api/redraft', async (req, res) => {
     const lead = leads.find(l => l.rowNumber === parseInt(rowNumber));
     if (!lead) return res.status(404).json({ error: 'Lead not found' });
 
-    // Need a Trustpilot URL to rescrape, or at least the old email data
-    if (!lead.trustpilotUrl) {
-      return res.status(400).json({ error: 'No Trustpilot URL — cannot regenerate email' });
+    // Phase 2 rewire: no live rescraping — the creator's discovery data (niche/
+    // platform/subscribers) already lives in the sheet row (columns G/J/K/L).
+    // See buildCreatorSignal() near processSingleCompany for the same bridge.
+    if (!lead.nicheTags && !lead.platform) {
+      return res.status(400).json({ error: 'No discovery data (niche/platform) on this row — cannot regenerate email' });
     }
 
-    // Scrape fresh reviews
-    const reviews = await scrapeReviews(lead.trustpilotUrl, [1, 2], 20);
-    if (reviews.length === 0) {
-      return res.status(400).json({ error: 'No negative reviews found on rescrape' });
-    }
+    const reviews = [{
+      rating: '',
+      date: '',
+      title: lead.nicheTags || 'creator profile',
+      text: [
+        lead.nicheTags && `Niche: ${lead.nicheTags}`,
+        lead.platform && `Platform: ${lead.platform}`,
+        lead.subscribers && `Followers/Subscribers: ${lead.subscribers}`,
+        lead.instagramHandle && `Instagram: ${lead.instagramHandle}`
+      ].filter(Boolean).join(' | ') || 'No discovery data available for this creator.'
+    }];
 
     // Load active outreach config
     let outreachConfig = {};
@@ -1392,9 +1399,8 @@ app.post('/api/redraft', async (req, res) => {
       newDraftId = draft.id || '';
     }
 
-    // Update Sheet1
+    // Update Sheet1 (G/NicheTags is left untouched — writeDraftToLead only writes H:I)
     await writeDraftToLead(parseInt(rowNumber), {
-      trustpilotUrl: lead.trustpilotUrl,
       emailDraft: typeof emailResult === 'object' ? JSON.stringify(emailResult) : variantA,
       draftId: newDraftId
     });
@@ -2711,36 +2717,61 @@ function setLeadStatus(rowNumber, status, detail = '') {
 }
 
 /**
+ * PHASE 2 BRIDGE (2026-09-01): trustpilot.js is no longer called anywhere in this
+ * pipeline. Creator discovery already ran upstream (n8n weekly job -> Apify /
+ * YouTube Data API -> written into Sheet1 columns G/J/K/L), so by the time a row
+ * reaches this function the discovery data is just sitting there waiting to be read.
+ *
+ * This packages that data into the same `reviews`-shaped array emailGen.js's
+ * generateEmail()/analyzeReviewsWithAI() already know how to consume, so this
+ * rewire doesn't have to wait on Phase 3's prompt rewrite to ship. It is a bridge,
+ * not the real personalization hook — the prompt in emailGen.js still talks about
+ * "REVIEW DATA" / negative reviews. TODO(Phase 3): replace this bridge and the
+ * emailGen.js prompt together so the email is actually written around niche/bio,
+ * not shoehorned into a reviews frame.
+ */
+function buildCreatorSignal(company) {
+  const parts = [];
+  if (company.nicheTags) parts.push(`Niche: ${company.nicheTags}`);
+  if (company.platform) parts.push(`Platform: ${company.platform}`);
+  if (company.subscribers) parts.push(`Followers/Subscribers: ${company.subscribers}`);
+  if (company.instagramHandle) parts.push(`Instagram: ${company.instagramHandle}`);
+
+  return [{
+    rating: '',
+    date: '',
+    title: company.nicheTags || 'creator profile',
+    text: parts.length > 0 ? parts.join(' | ') : 'No discovery data available for this creator.'
+  }];
+}
+
+/**
  * Core processing logic for a single company
  */
 async function processSingleCompany(company) {
-  setLeadStatus(company.rowNumber, 'processing', 'Searching Trustpilot...');
-  log(`  Searching Trustpilot...`);
-  const trustpilot = await findTrustpilotPage(company.website, company.company);
+  setLeadStatus(company.rowNumber, 'processing', 'Checking creator data...');
+  log(`  Checking creator discovery data...`);
 
-  if (!trustpilot.found) {
-    log(`  No Trustpilot page found`);
-    await writeDraftToLead(company.rowNumber, { trustpilotUrl: '', emailDraft: '', draftId: '' });
-    await markAsProcessed(company.rowNumber, 'Skipped - No Trustpilot');
-    setLeadStatus(company.rowNumber, 'skipped', 'No Trustpilot page');
+  if (!company.email) {
+    log(`  No email on file — skipping`);
+    await writeDraftToLead(company.rowNumber, { emailDraft: '', draftId: '' });
+    await markAsProcessed(company.rowNumber, 'Skipped - No Email');
+    setLeadStatus(company.rowNumber, 'skipped', 'No email address');
     currentJob.results.skipped++;
     return;
   }
 
-  log(`  Found: ${trustpilot.url}${trustpilot.rating ? ` (Rating: ${trustpilot.rating})` : ''}`);
-  setLeadStatus(company.rowNumber, 'processing', 'Scraping reviews...');
-
-  log(`  Scraping reviews...`);
-  const reviews = await scrapeReviews(trustpilot.url, [1, 2], 20);
-  log(`  Found ${reviews.length} negative reviews (past 6 months)`);
-
-  if (reviews.length === 0) {
-    await writeDraftToLead(company.rowNumber, { trustpilotUrl: trustpilot.url, emailDraft: '', draftId: '' });
-    await markAsProcessed(company.rowNumber, 'Skipped - No Recent Reviews');
-    setLeadStatus(company.rowNumber, 'skipped', 'No negative reviews in past 6 months');
+  if (!company.nicheTags && !company.platform) {
+    log(`  No discovery data (niche/platform) for this row — skipping`);
+    await writeDraftToLead(company.rowNumber, { emailDraft: '', draftId: '' });
+    await markAsProcessed(company.rowNumber, 'Skipped - No Discovery Data');
+    setLeadStatus(company.rowNumber, 'skipped', 'No niche/platform data from discovery');
     currentJob.results.skipped++;
     return;
   }
+
+  log(`  Creator data: niche="${company.nicheTags || 'n/a'}" platform="${company.platform || 'n/a'}" followers="${company.subscribers || 'n/a'}"`);
+  const reviews = buildCreatorSignal(company);
 
   // Load active outreach config for this run
   let outreachConfig = {};
@@ -2780,7 +2811,6 @@ async function processSingleCompany(company) {
   if (!subject || !body || !company.email) {
     log(`  No email address or empty email generated — skipping draft`);
     await writeDraftToLead(company.rowNumber, {
-      trustpilotUrl: trustpilot.url,
       emailDraft: typeof emailResult === 'object' ? JSON.stringify(emailResult) : variantA,
       draftId: ''
     });
@@ -2806,7 +2836,6 @@ async function processSingleCompany(company) {
 
   // Write everything to Sheet1
   await writeDraftToLead(company.rowNumber, {
-    trustpilotUrl: trustpilot.url,
     emailDraft: typeof emailResult === 'object' ? JSON.stringify(emailResult) : variantA,
     draftId
   });
@@ -2857,7 +2886,7 @@ async function processSingleCompany(company) {
             company: company.company,
             ceoName: company.ceoName,
             ceoEmail: company.email,
-            trustpilotUrl: trustpilot.url,
+            trustpilotUrl: company.website || '',
             painPoints: painPointsSummary,
             generatedEmail: emailResult,
             status: 'Scheduled'

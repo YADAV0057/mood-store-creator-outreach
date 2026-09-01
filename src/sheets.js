@@ -58,10 +58,13 @@ export async function readAllLeads(startRow = 2) {
   const sheets = await getClient();
   const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
-  // A=Status, B=First Name, C=Last Name, D=Company, E=Email, F=Website, G=Trustpilot URL, H=Email Draft, I=Draft ID
+  // Reconciled schema (2026-09-01, Phase 2): A=Status, B=First Name, C=Last Name,
+  // D=Company/Handle, E=Email, F=Website/ProfileUrl, G=NicheTags (repurposed from
+  // TrustpilotUrl — trustpilot.js is no longer called from this pipeline),
+  // H=Email Draft, I=Draft ID, J=Platform, K=Subscribers/Followers, L=Instagram Handle.
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `Sheet1!A${startRow}:I`,
+    range: `Sheet1!A${startRow}:L`,
   });
 
   const rows = response.data.values || [];
@@ -74,9 +77,12 @@ export async function readAllLeads(startRow = 2) {
       company: (row[3] || '').trim(),
       email: (row[4] || '').trim(),
       website: (row[5] || '').trim(),
-      trustpilotUrl: (row[6] || '').trim(),
+      nicheTags: (row[6] || '').trim(),
       emailDraft: (row[7] || '').trim(),
       draftId: (row[8] || '').trim(),
+      platform: (row[9] || '').trim(),
+      subscribers: (row[10] || '').trim(),
+      instagramHandle: (row[11] || '').trim(),
       rowNumber: startRow + index,
     }))
     .filter(row => row.email || row.company || row.firstName || row.lastName);
@@ -84,7 +90,11 @@ export async function readAllLeads(startRow = 2) {
 
 /**
  * Read companies from Sheet1 starting from a specific row
- * Compact layout: A=Status, B=First Name, C=Last Name, D=Company, E=Email, F=Website
+ * Reconciled layout (2026-09-01): A=Status, B=First Name, C=Last Name, D=Company,
+ * E=Email, F=Website, G=NicheTags, H=EmailDraft, I=DraftID, J=Platform,
+ * K=Subscribers, L=InstagramHandle. Creator discovery data (G, J, K, L) is already
+ * populated by the n8n/Apify/YouTube discovery pipeline before this ever runs, so
+ * no live scraping is needed here — that's the whole point of the Phase 2 rewire.
  */
 export async function readCompanies(startRow = 2, limit = null) {
   const sheets = await getClient();
@@ -92,7 +102,7 @@ export async function readCompanies(startRow = 2, limit = null) {
 
   // If limit specified, only fetch those rows
   const endRow = limit ? startRow + limit - 1 : '';
-  const range = limit ? `Sheet1!A${startRow}:F${endRow}` : `Sheet1!A${startRow}:F`;
+  const range = limit ? `Sheet1!A${startRow}:L${endRow}` : `Sheet1!A${startRow}:L`;
 
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
@@ -107,6 +117,10 @@ export async function readCompanies(startRow = 2, limit = null) {
       company: row[3]?.trim() || '',
       email: row[4]?.trim() || '',
       website: row[5]?.trim() || '',
+      nicheTags: row[6]?.trim() || '',
+      platform: row[9]?.trim() || '',
+      subscribers: row[10]?.trim() || '',
+      instagramHandle: row[11]?.trim() || '',
       rowNumber: startRow + index,
     }))
     .filter(row => row.company);
@@ -128,17 +142,21 @@ export async function markAsProcessed(rowNumber, status = 'email') {
 }
 
 /**
- * Write draft data to Sheet1 columns G-I (Trustpilot URL, Email Draft, Draft ID)
+ * Write draft data to Sheet1 columns H-I (Email Draft, Draft ID).
+ * Column G (NicheTags) is deliberately NOT touched here — it's set once by the
+ * discovery pipeline and must survive every draft/redraft cycle for this lead.
+ * `trustpilotUrl` param kept accepted-but-ignored for a release or two so any
+ * caller still passing it doesn't throw; remove once all call sites are updated.
  */
-export async function writeDraftToLead(rowNumber, { trustpilotUrl, emailDraft, draftId }) {
+export async function writeDraftToLead(rowNumber, { emailDraft, draftId } = {}) {
   const sheets = await getClient();
   const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
   await sheets.spreadsheets.values.update({
     spreadsheetId,
-    range: `Sheet1!G${rowNumber}:I${rowNumber}`,
+    range: `Sheet1!H${rowNumber}:I${rowNumber}`,
     valueInputOption: 'RAW',
-    requestBody: { values: [[trustpilotUrl || '', emailDraft || '', draftId || '']] }
+    requestBody: { values: [[emailDraft || '', draftId || '']] }
   });
 }
 
@@ -602,37 +620,46 @@ export async function clearLeadsFromSheet() {
   // Get the last row to know the range to clear
   const response = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: 'Sheet1!A2:I',
+    range: 'Sheet1!A2:L',
   });
   const rowCount = (response.data.values || []).length;
   if (rowCount === 0) return 0;
 
   await sheets.spreadsheets.values.clear({
     spreadsheetId,
-    range: `Sheet1!A2:I${rowCount + 1}`,
+    range: `Sheet1!A2:L${rowCount + 1}`,
   });
   return rowCount;
 }
 
+/**
+ * Append leads (creators) to Sheet1 in the reconciled schema.
+ * This is the shape both the manual /api/import-leads route AND, going forward,
+ * the n8n/Supabase discovery writers (write-youtube-leads, instagram-full-pipeline)
+ * should target — G/J/K/L carry the personalization data Phase 3 needs.
+ */
 export async function appendLeadsToSheet(leads) {
   const sheets = await getClient();
   const spreadsheetId = process.env.GOOGLE_SHEET_ID;
 
   const rows = leads.map(l => [
-    '',                   // A: Status (empty = unprocessed)
-    l.firstName || '',    // B: First Name
-    l.lastName || '',     // C: Last Name
-    l.company || '',      // D: Company
-    l.email || '',        // E: Email
-    l.website || '',      // F: Website
-    '',                   // G: Trustpilot URL (filled during processing)
-    '',                   // H: Email Draft (filled during processing)
-    '',                   // I: Draft ID (filled during processing)
+    '',                        // A: Status (empty = unprocessed)
+    l.firstName || '',         // B: First Name / display name
+    l.lastName || '',          // C: Last Name
+    l.company || '',           // D: Company / creator handle
+    l.email || '',             // E: Email
+    l.website || '',           // F: Website / profile URL
+    l.nicheTags || '',         // G: Niche tags (personalization hook)
+    '',                        // H: Email Draft (filled during processing)
+    '',                        // I: Draft ID (filled during processing)
+    l.platform || '',          // J: Platform (instagram / youtube)
+    l.subscribers || '',       // K: Subscribers / followers
+    l.instagramHandle || '',   // L: Instagram handle (if found separately from D)
   ]);
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: 'Sheet1!A:I',
+    range: 'Sheet1!A:L',
     valueInputOption: 'RAW',
     insertDataOption: 'INSERT_ROWS',
     requestBody: { values: rows },
