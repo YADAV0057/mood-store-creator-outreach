@@ -1,0 +1,27 @@
+name: Weekly Creator Discovery (Mood Store)
+
+# Runs every Monday at 6:00 AM IST (00:30 UTC).
+# GitHub cron is always in UTC — IST is UTC+5:30, so 6:00 AM IST = 00:30 UTC.
+on:
+  schedule:
+    - cron: '30 0 * * 1'
+  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab to test
+
+jobs:
+  run-discovery:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run YouTube Discovery
+        run: |
+          curl -sS -X GET "https://yrrficomytctlpypdkpy.supabase.co/functions/v1/youtube-discovery-native" \
+            --max-time 120 --fail-with-body
+
+      - name: Write YouTube Leads to Sheet
+        run: |
+          curl -sS -X GET "https://yrrficomytctlpypdkpy.supabase.co/functions/v1/write-youtube-leads" \
+            --max-time 120 --fail-with-body
+
+      - name: Run Instagram Discovery + Write
+        run: |
+          curl -sS -X GET "https://yrrficomytctlpypdkpy.supabase.co/functions/v1/instagram-full-pipeline" \
+            --max-time 180 --fail-with-body
