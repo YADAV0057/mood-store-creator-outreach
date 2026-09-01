@@ -1,0 +1,4120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trustpilot Outreach</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#141414">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* shadcn dark neutral palette */
+      --background: #141414;
+      --foreground: #fafafa;
+      --card: #1a1a1a;
+      --card-foreground: #fafafa;
+      --primary: #fafafa;
+      --primary-foreground: #141414;
+      --secondary: #2e2e2e;
+      --secondary-foreground: #fafafa;
+      --muted: #2e2e2e;
+      --muted-foreground: #a1a1a1;
+      --accent: #2e2e2e;
+      --accent-foreground: #fafafa;
+      --destructive: #e7000b;
+      --destructive-foreground: #ffffff;
+      --border: #2e2e2e;
+      --input: #2e2e2e;
+      --ring: #525252;
+      --sidebar: #111111;
+      --sidebar-foreground: #fafafa;
+      --sidebar-border: #2e2e2e;
+      --sidebar-accent: #2e2e2e;
+      --sidebar-accent-foreground: #fafafa;
+      --sidebar-primary: #fafafa;
+      --sidebar-primary-foreground: #0a0a0a;
+      /* chart blues */
+      --chart-1: #91c5ff;
+      --chart-2: #3a81f6;
+      --chart-3: #2563ef;
+      --chart-4: #1a4eda;
+      --chart-5: #1f3fad;
+      /* functional */
+      --success: #22c55e;
+      --success-dim: rgba(34, 197, 94, 0.10);
+      --warning: #f59e0b;
+      --warning-dim: rgba(245, 158, 11, 0.10);
+      --error: #ef4444;
+      --error-dim: rgba(239, 68, 68, 0.10);
+      --info: #3b82f6;
+      --info-dim: rgba(59, 130, 246, 0.10);
+      /* radii */
+      --radius: 0.75rem;
+      --radius-sm: 0.5rem;
+      --radius-xs: 0.375rem;
+      /* mono font */
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      line-height: 1.6;
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Layout */
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 240px;
+      background: var(--sidebar);
+      border-right: 1px solid var(--sidebar-border);
+      padding: 24px 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 50;
+    }
+
+    .sidebar-brand {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--sidebar-border);
+      margin-bottom: 8px;
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .sidebar-logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--sidebar-accent);
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sidebar-logo-icon svg { width: 18px; height: 18px; color: var(--chart-2); }
+
+    .sidebar-logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--sidebar-foreground);
+      letter-spacing: -0.02em;
+    }
+
+    .sidebar-logo-sub {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      font-weight: 400;
+    }
+
+    .sidebar-nav { padding: 8px 12px; flex: 1; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      color: var(--muted-foreground);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+      user-select: none;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--sidebar-accent);
+      color: var(--sidebar-foreground);
+    }
+
+    .nav-item.active {
+      background: var(--sidebar-accent);
+      color: var(--sidebar-primary);
+      font-weight: 600;
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 3px;
+      height: 20px;
+      background: var(--chart-2);
+      border-radius: 0 2px 2px 0;
+      animation: navIndicator 0.2s ease;
+    }
+
+    @keyframes navIndicator {
+      from { opacity: 0; height: 0; }
+      to { opacity: 1; height: 20px; }
+    }
+
+    .nav-item { position: relative; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--sidebar-border);
+    }
+
+    .sidebar-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted-foreground);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.green { background: var(--success); box-shadow: 0 0 6px var(--success); }
+    .status-dot.red { background: var(--error); }
+    .status-dot.yellow { background: var(--warning); }
+    .status-dot.gray { background: var(--muted-foreground); }
+
+    .main {
+      flex: 1;
+      margin-left: 240px;
+      padding: 32px 40px;
+    }
+
+    /* Page Header */
+    .page-header { margin-bottom: 28px; }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--foreground);
+      letter-spacing: -0.025em;
+    }
+
+    .page-desc {
+      font-size: 13px;
+      color: var(--muted-foreground);
+      margin-top: 4px;
+    }
+
+    /* Panels — bento-grid inspired */
+    .panel {
+      position: relative;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      overflow: hidden;
+      transition: all 0.3s;
+    }
+
+    .panel:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 16px rgba(255, 255, 255, 0.02);
+    }
+
+    /* Subtle dot pattern on panels */
+    .panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.015) 1px, transparent 1px);
+      background-size: 4px 4px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .panel:hover::before { opacity: 1; }
+
+    .panel-header {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      transition: border-color 0.25s ease;
+    }
+    .panel-header.collapsible.collapsed {
+      border-bottom-color: transparent;
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--foreground);
+      letter-spacing: 0.01em;
+    }
+
+    .panel-body {
+      position: relative;
+      z-index: 1;
+      padding: 20px;
+    }
+
+    /* KPI Row — bento card style */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-card {
+      position: relative;
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      transition: all 0.3s;
+      overflow: hidden;
+    }
+
+    .kpi-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 12px rgba(255,255,255,0.02);
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      border-radius: 0 2px 2px 0;
+      background: var(--muted-foreground);
+      opacity: 0.3;
+    }
+    .kpi-card.kpi-success::after { background: var(--success); opacity: 0.7; }
+    .kpi-card.kpi-warning::after { background: var(--warning); opacity: 0.7; }
+    .kpi-card.kpi-error::after { background: var(--error); opacity: 0.7; }
+    .kpi-card.kpi-info::after { background: var(--chart-2); opacity: 0.7; }
+
+    .kpi-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .kpi-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--muted-foreground);
+      opacity: 0.4;
+    }
+    .kpi-success .kpi-icon { color: var(--success); opacity: 0.6; }
+    .kpi-warning .kpi-icon { color: var(--warning); opacity: 0.6; }
+    .kpi-error .kpi-icon { color: var(--error); opacity: 0.6; }
+    .kpi-info .kpi-icon { color: var(--chart-2); opacity: 0.6; }
+
+    .kpi-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--foreground);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .kpi-value.accent { color: var(--success); }
+    .kpi-value.warning { color: var(--warning); }
+    .kpi-value.error { color: var(--error); }
+
+    /* Badges — pill style with backdrop blur */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 10px;
+      border-radius: var(--radius-xs);
+      font-size: 11px;
+      font-weight: 500;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .badge-idle {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted-foreground);
+    }
+
+    .badge-running {
+      background: var(--info-dim);
+      color: var(--info);
+    }
+
+    .badge-success, .badge-connected {
+      background: var(--success-dim);
+      color: var(--success);
+    }
+
+    .badge-error, .badge-disconnected {
+      background: var(--error-dim);
+      color: var(--error);
+    }
+
+    .badge-warning {
+      background: var(--warning-dim);
+      color: var(--warning);
+    }
+
+    .badge-drafting {
+      background: var(--info-dim);
+      color: var(--info);
+    }
+
+    /* Form Elements */
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      margin-bottom: 6px;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      margin-top: 4px;
+      opacity: 0.7;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    input[type="time"],
+    input[type="date"],
+    input[type="password"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--input);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-xs);
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--foreground);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 2px rgba(82, 82, 82, 0.25);
+    }
+
+    input::placeholder, textarea::placeholder {
+      color: var(--muted-foreground);
+      opacity: 0.6;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a1a1a1' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+    }
+
+    /* ── Custom Select (replaces native <select>) ── */
+    .custom-select {
+      position: relative;
+      width: 100%;
+    }
+    .custom-select-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: var(--input);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-xs);
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      color: var(--foreground);
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      user-select: none;
+      line-height: 1.4;
+    }
+    .custom-select-trigger:hover {
+      border-color: rgba(255,255,255,0.14);
+    }
+    .custom-select-trigger:focus,
+    .custom-select.open .custom-select-trigger {
+      border-color: var(--ring);
+      box-shadow: 0 0 0 2px rgba(82,82,82,0.25);
+    }
+    .custom-select-trigger .cs-chevron {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      margin-left: 8px;
+      opacity: 0.5;
+      transition: transform 0.2s;
+    }
+    .custom-select.open .cs-chevron {
+      transform: rotate(180deg);
+    }
+    .custom-select-dropdown {
+      position: fixed;
+      z-index: 9999;
+      box-sizing: border-box;
+      background: #141414;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+      max-height: 260px;
+      min-width: 160px;
+      overflow-y: auto;
+      padding: 4px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      scrollbar-color: var(--muted) transparent;
+      /* Hidden off-screen until positioned by JS */
+      top: -9999px;
+      left: -9999px;
+    }
+    .custom-select.open .custom-select-dropdown,
+    body > .custom-select-dropdown {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .custom-select-dropdown::-webkit-scrollbar { width: 5px; }
+    .custom-select-dropdown::-webkit-scrollbar-track { background: transparent; }
+    .custom-select-dropdown::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 3px; }
+    .custom-select-dropdown::-webkit-scrollbar-thumb:hover { background: var(--ring); }
+    .cs-option {
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--foreground);
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      transition: background 0.1s;
+      line-height: 1.4;
+    }
+    .cs-option:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .cs-option.selected {
+      background: rgba(58,129,246,0.12);
+      color: var(--chart-2);
+    }
+    .cs-option.cs-option-disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+    .cs-option.cs-option-disabled:hover {
+      background: transparent;
+    }
+    @keyframes tzPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .cs-group-label {
+      padding: 8px 10px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+    }
+    .cs-group-label:not(:first-child) {
+      margin-top: 4px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 8px;
+    }
+
+    /* Make date/time inputs open picker on click anywhere */
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"] {
+      cursor: pointer;
+      position: relative;
+    }
+    input[type="date"]::-webkit-calendar-picker-indicator,
+    input[type="time"]::-webkit-calendar-picker-indicator,
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Tooltip */
+    .tooltip-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+    .tooltip-wrap .tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      background: #141414;
+      color: var(--muted-foreground);
+      font-size: 11px;
+      line-height: 1.4;
+      padding: 6px 10px;
+      border-radius: var(--radius-xs);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      max-width: 260px;
+      width: max-content;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 50;
+    }
+    .tooltip-wrap:hover .tooltip {
+      opacity: 1;
+    }
+
+    .field-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .field-row .field { flex: 1; margin-bottom: 0; }
+
+    /* Buttons — shadcn-inspired with subtle shadows and smooth transitions */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 0 16px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+      border: none;
+      white-space: nowrap;
+      outline: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+    }
+
+    .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-foreground);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: rgba(250, 250, 250, 0.88);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:active:not(:disabled) {
+      background: rgba(250, 250, 250, 0.82);
+      box-shadow: none;
+    }
+
+    .btn-primary:disabled {
+      background: var(--muted);
+      color: var(--muted-foreground);
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.6;
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: var(--secondary-foreground);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: rgba(38, 38, 38, 0.85);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted-foreground);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-ghost:hover:not(:disabled) {
+      background: var(--accent);
+      color: var(--accent-foreground);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-ghost:active:not(:disabled) {
+      background: rgba(38, 38, 38, 0.8);
+    }
+
+    .btn-ghost:disabled {
+      color: var(--muted-foreground);
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      background: var(--background);
+      color: var(--accent-foreground);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background: var(--accent);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: var(--error-dim);
+      color: var(--error);
+      border: 1px solid transparent;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: rgba(239, 68, 68, 0.18);
+    }
+
+    .btn-danger:active:not(:disabled) {
+      background: rgba(239, 68, 68, 0.24);
+    }
+
+    .btn-sm {
+      padding: 0 10px;
+      height: 30px;
+      font-size: 12px;
+      border-radius: var(--radius-xs);
+    }
+
+    .btn-xs {
+      padding: 0 8px;
+      height: 24px;
+      font-size: 11px;
+      border-radius: var(--radius-xs);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    /* Progress */
+    .progress-track {
+      height: 4px;
+      background: var(--muted);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--chart-2), var(--chart-1));
+      border-radius: 2px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .progress-meta-label { color: var(--foreground); font-weight: 600; }
+    .progress-meta-value { color: var(--muted-foreground); }
+
+    /* Terminal Log */
+    .log {
+      max-height: 220px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--background);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+    }
+
+    .log-line {
+      display: flex;
+      gap: 12px;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .log-line:last-child { border-bottom: none; }
+
+    .log-ts {
+      color: var(--muted-foreground);
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+      opacity: 0.6;
+    }
+
+    .log-msg { color: var(--muted-foreground); }
+
+    /* Connected row */
+    .connected-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      background: var(--input);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-xs);
+    }
+
+    .connected-email {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted-foreground);
+    }
+
+    .connected-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0;
+    }
+
+    /* Password field */
+    .pw-wrap { position: relative; }
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: 500;
+    }
+    .pw-toggle:hover { color: var(--foreground); }
+
+    /* Status inline */
+    .field-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .field-status.valid { color: var(--success); }
+    .field-status.invalid { color: var(--error); }
+    .field-status.pending { color: var(--muted-foreground); }
+
+    /* Toggle button group — pill container with active indicator */
+    .btn-toggle-group {
+      display: inline-flex;
+      gap: 1px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+    .btn-toggle-group .btn-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: inherit;
+      color: var(--muted-foreground);
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-xs);
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      white-space: nowrap;
+      -webkit-font-smoothing: antialiased;
+    }
+    .btn-toggle-group .btn-toggle:hover {
+      color: var(--foreground);
+      background: rgba(255, 255, 255, 0.06);
+    }
+    .btn-toggle-group .btn-toggle.active {
+      color: var(--primary-foreground);
+      background: var(--primary);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    .filter-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-weight: 600;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      margin-left: 4px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      color: var(--muted-foreground);
+      line-height: 1;
+    }
+    .btn-toggle.active .filter-count {
+      background: rgba(0,0,0,0.2);
+      color: inherit;
+    }
+    .filter-count:empty { display: none; }
+
+    /* Reason column — hidden by default, shown only for skipped filter */
+    .reason-col-hidden .reason-col { display: none; }
+
+    /* Collapsible panel (accordion) */
+    .panel-header.collapsible {
+      cursor: pointer;
+      user-select: none;
+    }
+    .panel-header.collapsible:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .panel-header.collapsible .panel-chevron {
+      width: 16px;
+      height: 16px;
+      color: var(--muted-foreground);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .panel-header.collapsible.collapsed .panel-chevron {
+      transform: rotate(-90deg);
+    }
+    .panel-body-wrap {
+      overflow: hidden;
+      transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+      opacity: 1;
+    }
+    .panel-body-wrap.collapsed {
+      height: 0 !important;
+      opacity: 0;
+    }
+
+    /* Hidden */
+    .hidden { display: none !important; }
+
+    /* Stats grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .stat-cell {
+      background: var(--background);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+
+    .stat-cell:hover { border-color: rgba(255, 255, 255, 0.12); }
+
+    .stat-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--foreground);
+      line-height: 1;
+      margin-bottom: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-txt {
+      font-size: 11px;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-weight: 500;
+    }
+
+    /* Table */
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      table-layout: fixed;
+    }
+
+    .tbl thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      border-bottom: 1px solid var(--border);
+      background: var(--background);
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .tbl tbody td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--muted-foreground);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tbl tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+    .tbl tbody tr.lead-selected { background: rgba(58, 129, 246, 0.06); }
+    .tbl tbody tr.lead-processing { background: rgba(59, 130, 246, 0.08); }
+    .tbl tbody tr.lead-done { opacity: 0.55; }
+
+    .lead-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+      white-space: nowrap;
+    }
+    .lead-status-queued { background: rgba(255,255,255,0.06); color: var(--muted-foreground); }
+    .lead-status-processing { background: var(--info-dim); color: var(--info); }
+    .lead-status-done, .lead-status-drafted, .lead-status-generated { background: var(--success-dim); color: var(--success); }
+    .lead-status-scheduled { background: var(--info-dim); color: var(--info); }
+    .lead-status-sent { background: var(--success-dim); color: var(--success); }
+    .lead-status-skipped { background: var(--warning-dim); color: var(--warning); }
+    .lead-status-failed { background: var(--error-dim); color: var(--error); }
+    .lead-status-none { color: var(--muted-foreground); opacity: 0.4; font-size: 10px; }
+
+    .lead-detail {
+      display: block;
+      font-size: 10px;
+      color: var(--muted-foreground);
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--info);
+      animation: pulse-dot 1.2s ease-in-out infinite;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--ring); }
+
+    /* Focus */
+    button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 24px 16px; }
+      .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .field-row { flex-direction: column; }
+      .kpi-row { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: 1fr; }
+      .btn-row { flex-direction: column; }
+      .btn { width: 100%; }
+    }
+
+    /* Page sections — fade transition */
+    .page-section {
+      display: none;
+      opacity: 0;
+    }
+    .page-section.active {
+      display: block;
+      animation: pageFadeIn 0.2s ease forwards;
+    }
+    @keyframes pageFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Banner */
+    .banner {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .banner-warn { background: var(--warning-dim); color: var(--warning); }
+    .banner-success { background: var(--success-dim); color: var(--success); }
+    .banner-error { background: var(--error-dim); color: var(--error); }
+
+    .banner-close {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    /* Row actions dropdown */
+    .row-actions-wrap {
+      position: relative;
+      display: inline-block;
+    }
+    .row-actions-trigger {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 22px;
+      background: none;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius-xs);
+      color: var(--muted-foreground);
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      line-height: 1;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .row-actions-trigger:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: var(--foreground);
+    }
+    .row-actions-dropdown {
+      position: fixed;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      z-index: 9999;
+      min-width: 158px;
+      width: auto;
+      padding: 4px;
+      opacity: 0;
+      transform: scale(0.96) translateY(-4px);
+      pointer-events: none;
+      transition: opacity 0.12s, transform 0.12s;
+      transform-origin: top right;
+    }
+    .row-actions-dropdown.open {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+    .row-actions-dropdown button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      width: 100%;
+      padding: 7px 10px;
+      background: none;
+      border: none;
+      border-radius: calc(var(--radius-xs) - 1px);
+      font-size: 12px;
+      font-family: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.1s;
+      white-space: nowrap;
+    }
+    .row-actions-dropdown button:hover { background: rgba(255,255,255,0.05); }
+    .row-action-send { color: var(--info); }
+    .row-action-send:hover { background: var(--info-dim) !important; }
+    .row-action-rewrite { color: var(--foreground); }
+    .row-action-cancel { color: var(--error); }
+    .row-action-cancel:hover { background: var(--error-dim) !important; }
+    .row-action-view { color: var(--success); }
+    .row-action-view:hover { background: var(--success-dim) !important; }
+    .row-actions-sep {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin: 3px 4px;
+    }
+
+    /* Toast notifications */
+    #toastContainer {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border: 1px solid;
+      font-size: 12px;
+      font-weight: 500;
+      max-width: 280px;
+      pointer-events: auto;
+      animation: toastIn 0.18s ease;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .toast.hiding { opacity: 0; transform: translateX(12px); }
+    .toast-success { background: var(--success-dim); border-color: rgba(34,197,94,0.25); color: var(--success); }
+    .toast-error { background: var(--error-dim); border-color: rgba(239,68,68,0.25); color: var(--error); }
+    .toast-info { background: var(--info-dim); border-color: rgba(59,130,246,0.25); color: var(--info); }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: none; } }
+
+    /* Draft view badge button in table */
+    .lead-status.clickable-badge {
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .lead-status.clickable-badge:hover { opacity: 0.8; }
+
+    /* Detail modal overlay */
+    .detail-modal-overlay {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .detail-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .detail-modal {
+      background: var(--secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 640px;
+      width: 90%;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(8px) scale(0.98);
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .detail-modal-overlay.open .detail-modal {
+      transform: translateY(0) scale(1);
+    }
+    .detail-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-modal-header h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .detail-modal-close {
+      background: none;
+      border: none;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 4px 8px;
+      border-radius: var(--radius-xs);
+    }
+    .detail-modal-close:hover { background: rgba(255,255,255,0.08); }
+    .detail-modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: var(--font-mono);
+      color: var(--foreground);
+      height: 50vh;
+    }
+    /* Confirm / input modals size to their content, not a fixed height */
+    #confirmModalBody {
+      height: auto;
+      min-height: 0;
+    }
+
+    .confirm-modal-footer .btn {
+      flex: 1;
+      min-width: 0;
+    }
+    #confirmModalReplace {
+      color: var(--error);
+      border-color: rgba(239,68,68,0.25);
+    }
+    #confirmModalReplace:hover {
+      background: rgba(239,68,68,0.08);
+    }
+    /* Clickable truncated detail */
+    .lead-sched-time {
+      cursor: pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+      color: var(--muted-foreground);
+      transition: color 0.15s;
+    }
+    .lead-sched-time:hover { color: var(--info); }
+
+    .lead-detail.clickable {
+      cursor: pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+    }
+    .lead-detail.clickable:hover { color: var(--foreground); }
+    .log-msg.clickable {
+      cursor: pointer;
+      text-decoration: underline dotted;
+      text-underline-offset: 2px;
+    }
+    .log-msg.clickable:hover { color: var(--foreground); }
+  </style>
+</head>
+<body>
+  <!-- Detail/Error popup modal -->
+  <div class="detail-modal-overlay" id="detailModal" onclick="if(event.target===this)closeDetailModal()">
+    <div class="detail-modal">
+      <div class="detail-modal-header">
+        <h3 id="detailModalTitle">Details</h3>
+        <button class="detail-modal-close" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="detail-modal-body" id="detailModalBody"></div>
+    </div>
+  </div>
+
+  <!-- Confirm modal (reusable) -->
+  <!-- Toast container -->
+  <div id="toastContainer"></div>
+
+  <div class="detail-modal-overlay" id="confirmModal" onclick="if(event.target===this)closeConfirmModal()">
+    <div class="detail-modal" style="max-width: 440px;">
+      <div class="detail-modal-header">
+        <h3 id="confirmModalTitle">Confirm</h3>
+        <button class="detail-modal-close" onclick="closeConfirmModal()">&times;</button>
+      </div>
+      <div class="detail-modal-body" id="confirmModalBody" style="white-space: normal; font-family: inherit; font-size: 13px; color: var(--muted-foreground);"></div>
+      <div class="confirm-modal-footer" style="display: flex; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid var(--border);">
+        <button class="btn btn-ghost btn-sm" id="confirmModalCancel" onclick="closeConfirmModal()">Cancel</button>
+        <button class="btn btn-ghost btn-sm hidden" id="confirmModalReplace">Replace All</button>
+        <button class="btn btn-primary btn-sm" id="confirmModalAction">Confirm</button>
+      </div>
+    </div>
+  </div>
+  <div class="app">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          </div>
+          <div>
+            <div class="sidebar-logo-text">Trustpilot Outreach</div>
+            <div class="sidebar-logo-sub">Automation Platform</div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-nav">
+        <button class="nav-item active" onclick="showPage('setup')" data-page="setup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          Setup
+        </button>
+        <button class="nav-item" onclick="showPage('process')" data-page="process">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Processing
+        </button>
+      </div>
+      <div class="sidebar-footer">
+        <div class="sidebar-status">
+          <span class="status-dot gray" id="sidebarDot"></span>
+          <span id="sidebarStatusText">Idle</span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+
+      <!-- ======== SETUP PAGE ======== -->
+      <section class="page-section active" id="page-setup">
+        <div class="page-header">
+          <h1 class="page-title">Setup</h1>
+          <p class="page-desc">Configure API keys, spreadsheet, and email accounts</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Gemini AI</span>
+              <span class="field-status pending" id="geminiStatus"></span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="field-row">
+                <div class="field">
+                  <label class="field-label">API Key</label>
+                  <div class="pw-wrap">
+                    <input type="password" id="setupGeminiKey" placeholder="AIza..." autocomplete="off">
+                    <button type="button" class="pw-toggle" onclick="togglePw('setupGeminiKey', this)">Show</button>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="testGeminiKey()" style="align-self: flex-end; margin-bottom: 0;">Test</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Google Sheet</span>
+              <span class="field-status pending" id="sheetStatus"></span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="field-row">
+                <div class="field">
+                  <label class="field-label">Sheet URL or ID</label>
+                  <input type="text" id="setupSheetId" placeholder="https://docs.google.com/spreadsheets/d/...">
+                </div>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="testSheetConnection()" style="align-self: flex-end;">Test</button>
+              </div>
+              <div class="field-hint">Paste the full Google Sheet URL or just the Sheet ID</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Gmail Account</span>
+              <span class="badge badge-idle" id="gmailSetupStatus">Checking...</span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="connected-row" id="gmailSetupSection">
+                <span class="connected-email" id="gmailSetupEmail"></span>
+                <div class="connected-actions">
+                  <button type="button" class="btn btn-ghost btn-sm" onclick="connectGmail()" id="connectGmailBtn">Connect</button>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="disconnectGmail()" id="disconnectGmailBtn" disabled>Disconnect</button>
+                </div>
+              </div>
+              <div class="field-hint">Connect the Gmail account you want to authorize for sending</div>
+
+              <!-- Send From -->
+              <div id="sendFromSection" class="hidden" style="margin-top: 14px;">
+                <label class="field-label">Send Emails From</label>
+                <div class="field-row">
+                  <div class="field">
+                    <div class="custom-select" id="sendFromEmail" data-value="">
+                      <div class="custom-select-trigger" tabindex="0">
+                        <span class="cs-label" style="color: var(--muted-foreground); opacity: 0.6;">Loading addresses...</span>
+                        <svg class="cs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                      <div class="custom-select-dropdown"></div>
+                    </div>
+                  </div>
+                  <span class="field-status pending" id="sendFromStatus"></span>
+                </div>
+                <div class="field-hint">Choose which email address appears as the sender</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Service Account</span>
+              <span class="badge badge-idle" id="serviceAccountStatus">Checking...</span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="connected-row">
+                <span class="connected-email" id="serviceAccountEmail" style="word-break: break-all;"></span>
+              </div>
+              <div class="field-hint">Share your Google Sheet with this email address</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Outreach Profile -->
+        <div class="panel" id="outreachProfilePanel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Outreach Profile</span>
+              <span class="badge badge-idle" id="outreachProfileStatus">Not set</span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="field-hint" style="margin-bottom: 16px; font-size: 12px; line-height: 1.6;">
+                Tell the AI what your leads struggle with and what you offer. It will focus scraping and outreach copy on those pain points.
+              </div>
+
+              <!-- Preset Selector -->
+              <div class="field">
+                <div class="field-label">Preset</div>
+                <div class="custom-select" id="outreachPresetSelect" data-value="ecommerce-ops" data-manual-dropdown="true" style="position: relative;">
+                  <div class="custom-select-trigger" tabindex="0" onclick="toggleOutreachPresetDropdown()" onkeydown="if(event.key==='Enter'||event.key===' ')toggleOutreachPresetDropdown()">
+                    <span class="cs-label" id="outreachPresetLabel">E-commerce Ops</span>
+                    <svg class="cs-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                  <div class="custom-select-dropdown" id="outreachPresetDropdown" style="position:absolute; top:100%; left:0; right:0; z-index:100; background:var(--card); border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-xs); margin-top:4px; max-height:220px; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,0.4); opacity:0; pointer-events:none; transform:translateY(-4px); transition:opacity 0.18s ease, transform 0.18s ease;">
+                    <div id="outreachPresetOptions"></div>
+                  </div>
+                </div>
+                <div class="field-hint">Built-in: E-commerce Ops · SEO Agency · Dev Shop · CX/Support</div>
+              </div>
+
+              <div style="border-top: 1px solid rgba(255,255,255,0.06); margin: 16px 0;"></div>
+
+              <!-- Pain Points -->
+              <div class="field">
+                <div class="field-label">What your leads struggle with</div>
+                <textarea id="outreachPainPoints" rows="3" placeholder="Late deliveries, lost packages, wrong items shipped, fulfillment delays during peak season..." style="width:100%; resize:vertical; font-family:var(--font-sans); font-size:12px; line-height:1.6; background:var(--input); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-xs); padding:10px 12px; color:var(--foreground); outline:none; box-sizing:border-box;"></textarea>
+              </div>
+
+              <!-- Offer -->
+              <div class="field">
+                <div class="field-label">What you offer</div>
+                <textarea id="outreachOffer" rows="2" placeholder="We optimize fulfillment operations — 3PL routing, warehouse workflows, and peak-season scaling..." style="width:100%; resize:vertical; font-family:var(--font-sans); font-size:12px; line-height:1.6; background:var(--input); border:1px solid rgba(255,255,255,0.08); border-radius:var(--radius-xs); padding:10px 12px; color:var(--foreground); outline:none; box-sizing:border-box;"></textarea>
+              </div>
+
+              <!-- Tone -->
+              <div class="field">
+                <div class="field-label">Tone</div>
+                <div style="display: flex; gap: 8px;">
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-xs);flex:1;transition:border-color 0.15s;" id="tone-label-professional">
+                    <input type="radio" name="outreachTone" value="professional" style="accent-color:var(--chart-2);" onchange="onOutreachToneChange()">
+                    <div><div style="font-size:12px;font-weight:500;">Professional</div><div style="font-size:10px;color:var(--muted-foreground);margin-top:1px;">Measured, credible</div></div>
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-xs);flex:1;transition:border-color 0.15s;" id="tone-label-casual">
+                    <input type="radio" name="outreachTone" value="casual" style="accent-color:var(--chart-2);" onchange="onOutreachToneChange()">
+                    <div><div style="font-size:12px;font-weight:500;">Casual</div><div style="font-size:10px;color:var(--muted-foreground);margin-top:1px;">Conversational, peer</div></div>
+                  </label>
+                  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 14px;border:1px solid rgba(255,255,255,0.08);border-radius:var(--radius-xs);flex:1;transition:border-color 0.15s;" id="tone-label-direct">
+                    <input type="radio" name="outreachTone" value="direct" style="accent-color:var(--chart-2);" onchange="onOutreachToneChange()">
+                    <div><div style="font-size:12px;font-weight:500;">Direct</div><div style="font-size:10px;color:var(--muted-foreground);margin-top:1px;">Blunt, numbers-first</div></div>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Save buttons -->
+              <div class="btn-row" style="margin-top: 8px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="saveOutreachProfile()" id="saveOutreachProfileBtn">Save</button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="saveOutreachProfileAsNew()" id="saveOutreachAsNewBtn">Save as new preset</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="deleteOutreachPreset()" id="deleteOutreachPresetBtn" style="margin-left:auto; display:none;">Delete preset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Delivery Settings -->
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Delivery Settings</span>
+              <span class="badge badge-idle" id="deliverySettingsStatus">Saved</span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body">
+              <div class="field" style="margin-bottom: 16px;">
+                <label class="field-label">After processing</label>
+                <div style="display: flex; gap: 8px; margin-top: 6px;">
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-xs); flex: 1; transition: border-color 0.15s;" id="modeRadioDrafts">
+                    <input type="radio" name="deliveryMode" value="drafts-only" id="modeDraftsOnly" style="accent-color: var(--chart-2); cursor: pointer; width: auto;">
+                    <div>
+                      <div style="font-size: 13px; font-weight: 500; color: var(--foreground);">Create drafts only</div>
+                      <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 2px;">Emails land in Gmail drafts — review before sending</div>
+                    </div>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 10px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-xs); flex: 1; transition: border-color 0.15s;" id="modeRadioSchedule">
+                    <input type="radio" name="deliveryMode" value="auto-schedule" id="modeAutoSchedule" style="accent-color: var(--chart-2); cursor: pointer; width: auto;">
+                    <div>
+                      <div style="font-size: 13px; font-weight: 500; color: var(--foreground);">Auto-schedule sends</div>
+                      <div style="font-size: 11px; color: var(--muted-foreground); margin-top: 2px;">Queues emails to send within business hours</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div id="scheduleSettingsFields">
+                <div class="field-row" style="align-items: flex-start;">
+                  <div class="field">
+                    <label class="field-label">Timezone</label>
+                    <div class="custom-select" id="deliveryTimezoneSelect" data-value="Europe/Madrid">
+                      <div class="custom-select-trigger" tabindex="0">
+                        <span class="cs-label">Madrid (CET/CEST)</span>
+                        <svg class="cs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                      </div>
+                      <div class="custom-select-dropdown">
+                        <div class="cs-group-label">Americas</div>
+                        <div class="cs-option" data-value="America/New_York">New York (ET)</div>
+                        <div class="cs-option" data-value="America/Chicago">Chicago (CT)</div>
+                        <div class="cs-option" data-value="America/Los_Angeles">Los Angeles (PT)</div>
+                        <div class="cs-group-label">Europe</div>
+                        <div class="cs-option" data-value="Europe/London">London (GMT/BST)</div>
+                        <div class="cs-option" data-value="Europe/Paris">Paris (CET/CEST)</div>
+                        <div class="cs-option selected" data-value="Europe/Madrid">Madrid (CET/CEST)</div>
+                        <div class="cs-option" data-value="Europe/Berlin">Berlin (CET/CEST)</div>
+                        <div class="cs-option" data-value="Europe/Bucharest">Bucharest (EET/EEST)</div>
+                        <div class="cs-group-label">Asia</div>
+                        <div class="cs-option" data-value="Asia/Dubai">Dubai (GST)</div>
+                        <div class="cs-option" data-value="Asia/Kolkata">Mumbai / Delhi (IST)</div>
+                        <div class="cs-option" data-value="Asia/Singapore">Singapore (SGT)</div>
+                        <div class="cs-option" data-value="Asia/Tokyo">Tokyo (JST)</div>
+                      </div>
+                    </div>
+                    <div class="tz-live-clock" id="tzLiveClock" style="margin-top: 6px; font-size: 11px; color: var(--muted-foreground); display: flex; align-items: center; gap: 6px;">
+                      <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--chart-2); display: inline-block; animation: tzPulse 2s infinite;"></span>
+                      <span>Current time: <span id="tzLiveTime" style="color: var(--foreground); font-weight: 500; font-variant-numeric: tabular-nums;">--:--</span></span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label class="field-label">Business Hours</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                      <div class="custom-select" id="deliveryStartTimeSelect" data-value="09:00" style="flex: 1;">
+                        <div class="custom-select-trigger" tabindex="0">
+                          <span class="cs-label">09:00</span>
+                          <svg class="cs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <div class="custom-select-dropdown" id="startTimeDropdown"></div>
+                      </div>
+                      <span style="color: var(--muted-foreground); font-size: 12px; flex-shrink: 0;">to</span>
+                      <div class="custom-select" id="deliveryEndTimeSelect" data-value="17:00" style="flex: 1;">
+                        <div class="custom-select-trigger" tabindex="0">
+                          <span class="cs-label">17:00</span>
+                          <svg class="cs-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                        <div class="custom-select-dropdown" id="endTimeDropdown"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="field-row" style="margin-top: 12px;">
+                  <div class="field">
+                    <label class="field-label">Min interval (min)</label>
+                    <input type="number" id="deliveryMinInterval" value="15" min="1" max="120">
+                  </div>
+                  <div class="field">
+                    <label class="field-label">Max interval (min)</label>
+                    <input type="number" id="deliveryMaxInterval" value="25" min="1" max="120">
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top: 14px; padding: 10px 12px; background: rgba(58,129,246,0.06); border-left: 2px solid var(--chart-2); border-radius: var(--radius-xs); font-size: 11px; color: var(--muted-foreground); line-height: 1.5;">
+                <strong style="color: var(--foreground);">Overflow behavior.</strong>
+                If the queued volume can't fit within today's window (start–end, at chosen intervals),
+                remaining emails automatically roll to the next day at your configured start time.
+                Schedule can span up to 14 days; anything beyond is reported as dropped.
+              </div>
+              <div class="btn-row" style="margin-top: 12px;">
+                <button class="btn btn-primary btn-sm" onclick="saveDeliverySettings()">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Import Leads</span>
+          </div>
+          <div class="panel-body">
+            <div class="field-hint" style="margin-bottom: 12px;">CSV columns: firstName, lastName, company, email, website. Only leads with both email and website are imported.</div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <button class="btn btn-primary" id="importBtn" onclick="triggerImport()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Import &amp; Sync
+              </button>
+              <span id="importResult" style="font-size: 12px;"></span>
+            </div>
+            <input type="file" id="importFile" accept=".csv,.xml" class="hidden">
+          </div>
+        </div>
+      </section>
+
+      <!-- ======== PROCESSING PAGE ======== -->
+      <section class="page-section" id="page-process">
+        <div class="page-header">
+          <h1 class="page-title">Processing</h1>
+          <p class="page-desc">Scrape Trustpilot reviews and generate outreach emails</p>
+        </div>
+
+        <!-- KPI Row -->
+        <div class="kpi-row" id="processKpis">
+          <div class="kpi-card kpi-info">
+            <div class="kpi-top">
+              <div class="kpi-label">Processed</div>
+              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            </div>
+            <div class="kpi-value" id="kpiProcessed">0</div>
+          </div>
+          <div class="kpi-card kpi-success">
+            <div class="kpi-top">
+              <div class="kpi-label">Successful</div>
+              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div class="kpi-value accent" id="successCount">0</div>
+          </div>
+          <div class="kpi-card kpi-warning">
+            <div class="kpi-top">
+              <div class="kpi-label">Skipped</div>
+              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+            </div>
+            <div class="kpi-value warning" id="skippedCount">0</div>
+          </div>
+          <div class="kpi-card kpi-error">
+            <div class="kpi-top">
+              <div class="kpi-label">Failed</div>
+              <svg class="kpi-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+            </div>
+            <div class="kpi-value error" id="failedCount">0</div>
+          </div>
+        </div>
+
+        <!-- Progress (shows during processing) -->
+        <div class="panel hidden" id="progressSection">
+          <div class="panel-body">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="progress-meta">
+              <span class="progress-meta-label" id="progressLabel">0 / 0</span>
+              <span class="progress-meta-value" id="currentCompany"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leads Table -->
+        <div class="panel">
+          <div class="panel-header" style="flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="panel-title">Leads</span>
+              <span style="font-size: 11px; color: var(--muted-foreground); font-variant-numeric: tabular-nums;" id="leadsCountLabel"></span>
+              <span class="badge badge-idle" id="statusBadge">Idle</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+              <!-- Delivery mode status chip -->
+              <button onclick="goToDeliverySettings()" title="Change in Setup → Delivery Settings" style="display:flex;align-items:center;gap:5px;padding:3px 9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius-xs);cursor:pointer;color:var(--muted-foreground);font-size:11px;transition:border-color 0.15s;" onmouseover="this.style.borderColor='rgba(255,255,255,0.15)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;flex-shrink:0;"><circle cx="8" cy="8" r="2.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.2 3.2l1.4 1.4M11.4 11.4l1.4 1.4M11.4 3.2l-1.4 1.4M3.2 11.4l1.4 1.4" stroke-width="1.5"/></svg>
+                <span id="deliveryModeChip">Drafts only</span>
+              </button>
+              <span style="width: 1px; height: 14px; background: rgba(255,255,255,0.08); flex-shrink:0;"></span>
+              <button class="btn btn-ghost btn-sm" onclick="loadLeads()" title="Sync leads from Google Sheets">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+                Sync
+              </button>
+              <button class="btn btn-primary btn-sm" id="startBtn" onclick="startProcessing()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Run
+              </button>
+              <button class="btn btn-ghost btn-sm" id="stopBtn" onclick="stopProcessing()" disabled>Stop</button>
+            </div>
+          </div>
+          <div class="panel-body" style="padding: 0;">
+            <!-- Filter bar -->
+            <div id="leadsFilterBar" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap;">
+              <div class="btn-toggle-group" id="filterToggleGroup">
+                <button class="btn-toggle active" onclick="setLeadFilter('all', this)">All <span class="filter-count" id="fc-all"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('new', this)">New <span class="filter-count" id="fc-new"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('ready', this)">Ready to Send <span class="filter-count" id="fc-ready"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('scheduled', this)">Scheduled <span class="filter-count" id="fc-scheduled"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('sent', this)">Sent <span class="filter-count" id="fc-sent"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('skipped', this)">Skipped <span class="filter-count" id="fc-skipped"></span></button>
+                <button class="btn-toggle" onclick="setLeadFilter('failed', this)">Failed <span class="filter-count" id="fc-failed"></span></button>
+              </div>
+              <div style="margin-left: auto; position: relative; display: flex; align-items: center;">
+                <svg style="position: absolute; left: 10px; width: 14px; height: 14px; color: var(--muted-foreground); opacity: 0.5; pointer-events: none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="leadSearchInput" placeholder="Search..." oninput="applyLeadFilters()" style="width: 180px; padding: 5px 10px 5px 30px; font-size: 12px; height: 30px; border-radius: var(--radius-xs);">
+              </div>
+            </div>
+            <div id="leadsLoading" style="padding: 32px; text-align: center; color: var(--muted-foreground); font-size: 13px;">
+              Loading leads from sheet...
+            </div>
+            <div id="leadsEmpty" class="hidden" style="padding: 32px; text-align: center; color: var(--muted-foreground); font-size: 13px;">
+              No leads found. Make sure leads are in Sheet1 (columns A-F).
+            </div>
+            <div id="leadsTableWrap" class="hidden" style="overflow-x: auto; overflow-y: auto; max-height: 520px;">
+              <table class="tbl" id="leadsTable" style="table-layout: fixed; min-width: 820px;">
+                <colgroup>
+                  <col style="width: 38px;">
+                  <col style="width: 13%;">
+                  <col style="width: 13%;">
+                  <col style="width: 20%;">
+                  <col style="width: 15%;">
+                  <col style="width: 11%;">
+                  <col class="reason-col" style="width: 13%;">
+                  <col style="width: 80px;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th style="padding-left: 14px;">
+                      <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this.checked)" style="accent-color: var(--chart-2); cursor: pointer;">
+                    </th>
+                    <th>Name</th>
+                    <th>Company</th>
+                    <th>Email</th>
+                    <th>Website</th>
+                    <th>Scheduled</th>
+                    <th class="reason-col">Reason</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="leadsBody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="panel-footer" id="leadsActions" style="display: flex; align-items: center; padding: 8px 16px; border-top: 1px solid rgba(255,255,255,0.06); gap: 8px;">
+            <span style="font-size: 12px; color: var(--muted-foreground); flex-shrink: 0; white-space: nowrap; font-variant-numeric: tabular-nums; width: 80px; display: inline-block;" id="selectedCount">0 selected</span>
+            <div class="btn-toggle-group" style="margin-left: 10px;">
+              <button class="btn-toggle" id="selAll" onclick="selectAllLeads()" style="font-size: 11px; padding: 3px 10px;">Select All</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="panel">
+          <div class="panel-header collapsible collapsed" onclick="togglePanel(this)">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="panel-title">Activity Log</span>
+              <span style="font-size: 11px; color: var(--muted-foreground); opacity: 0.6;" id="logCountBadge"></span>
+            </div>
+            <svg class="panel-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+          <div class="panel-body-wrap collapsed">
+            <div class="panel-body" style="padding: 12px;">
+              <div class="log" id="logContainer">
+                <div class="log-line">
+                  <span class="log-ts">--:--:--</span>
+                  <span class="log-msg">Ready.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ======== SCHEDULE PAGE ======== -->
+      <!-- Schedule page removed — scheduling info is shown inline in the Processing table -->
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ============ CUSTOM SELECT ============
+    function csGetValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.dataset.value : '';
+    }
+    function csSetValue(id, value) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.dataset.value = value;
+      // Dropdown may be detached on body when open
+      const dd = el._dropdown || el.querySelector('.custom-select-dropdown');
+      const opt = dd ? dd.querySelector(`.cs-option[data-value="${CSS.escape(value)}"]`) : null;
+      const label = el.querySelector('.cs-label');
+      if (opt && label) {
+        label.textContent = opt.textContent;
+        label.style.color = '';
+        label.style.opacity = '';
+      }
+      if (dd) dd.querySelectorAll('.cs-option').forEach(o => o.classList.toggle('selected', o.dataset.value === value));
+    }
+    function csSetOptions(id, options, selectedValue) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const dropdown = el._dropdown || el.querySelector('.custom-select-dropdown');
+      dropdown.innerHTML = options.map(o =>
+        `<div class="cs-option${o.value === selectedValue ? ' selected' : ''}${o.disabled ? ' cs-option-disabled' : ''}" data-value="${esc(o.value)}"${o.disabled ? ' data-disabled="true"' : ''}>${esc(o.label)}</div>`
+      ).join('');
+      if (selectedValue) {
+        el.dataset.value = selectedValue;
+        const label = el.querySelector('.cs-label');
+        const match = options.find(o => o.value === selectedValue);
+        if (match && label) { label.textContent = match.label; label.style.color = ''; label.style.opacity = ''; }
+      } else if (options.length > 0) {
+        csSetValue(id, options[0].value);
+      }
+      _csBindOptions(el);
+    }
+    function _csBindOptions(el) {
+      const dropdown = el._dropdown || el.querySelector('.custom-select-dropdown');
+      (dropdown || el).querySelectorAll('.cs-option').forEach(opt => {
+        opt.onclick = (e) => {
+          e.stopPropagation();
+          if (opt.dataset.disabled === 'true') return;
+          csSetValue(el.id, opt.dataset.value);
+          _csClose(el);
+          el._onChange && el._onChange(opt.dataset.value);
+        };
+      });
+    }
+    function csOnChange(id, fn) {
+      const el = document.getElementById(id);
+      if (el) el._onChange = fn;
+    }
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll('.custom-select.open').forEach(sel => {
+        if (!sel.contains(e.target) && !(sel._dropdown && sel._dropdown.contains(e.target))) _csClose(sel);
+      });
+    });
+    // Close a custom-select and return its dropdown to its parent
+    function _csClose(sel) {
+      sel.classList.remove('open');
+      const dd = sel._dropdown;
+      if (dd && dd.parentNode === document.body) {
+        sel.appendChild(dd);
+        dd.style.top = ''; dd.style.left = ''; dd.style.bottom = ''; dd.style.width = '';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.custom-select').forEach(sel => {
+        if (sel.dataset.manualDropdown === 'true') return;
+        const trigger = sel.querySelector('.custom-select-trigger');
+        const dropdown = sel.querySelector('.custom-select-dropdown');
+        sel._dropdown = dropdown;
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          // Close other open selects
+          document.querySelectorAll('.custom-select.open').forEach(s => { if (s !== sel) _csClose(s); });
+          const wasOpen = sel.classList.contains('open');
+          if (wasOpen) { _csClose(sel); return; }
+          // Move dropdown to body to escape overflow:hidden
+          sel.classList.add('open');
+          document.body.appendChild(dropdown);
+          const rect = trigger.getBoundingClientRect();
+          dropdown.style.top = (rect.bottom + 4) + 'px';
+          dropdown.style.left = rect.left + 'px';
+          dropdown.style.width = rect.width + 'px';
+          dropdown.style.bottom = '';
+          // Flip up if not enough space below
+          const spaceBelow = window.innerHeight - rect.bottom - 8;
+          if (spaceBelow < 200 && rect.top > 200) {
+            dropdown.style.top = (rect.top - dropdown.scrollHeight - 4) + 'px';
+          }
+          const selected = dropdown.querySelector('.cs-option.selected');
+          if (selected) selected.scrollIntoView({ block: 'nearest' });
+        });
+        trigger.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); trigger.click(); }
+          if (e.key === 'Escape') _csClose(sel);
+        });
+        _csBindOptions(sel);
+      });
+    });
+
+    // ============ POPULATE TIME DROPDOWNS ============
+    function getNowInTimezone(tz) {
+      try {
+        const parts = new Intl.DateTimeFormat('en-GB', {
+          timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false
+        }).formatToParts(new Date());
+        const h = +parts.find(p => p.type === 'hour').value;
+        const m = +parts.find(p => p.type === 'minute').value;
+        return { hours: h, minutes: m, mins: h * 60 + m, hhmm: String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') };
+      } catch (e) {
+        const d = new Date();
+        return { hours: d.getHours(), minutes: d.getMinutes(), mins: d.getHours()*60+d.getMinutes(), hhmm: '--:--' };
+      }
+    }
+
+    function _buildHourOptions() {
+      const hours = [];
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 30) {
+          const val = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+          hours.push({ value: val, label: val });
+        }
+      }
+      return hours;
+    }
+
+    function rebuildTimeDropdowns() {
+      const tz = csGetValue('deliveryTimezoneSelect') || 'Europe/Madrid';
+      const now = getNowInTimezone(tz);
+      const currentStart = csGetValue('deliveryStartTimeSelect') || '09:00';
+      const [sh, sm] = currentStart.split(':').map(Number);
+      const startMins = sh * 60 + sm;
+
+      const startOptions = _buildHourOptions().map(o => {
+        const [h, m] = o.value.split(':').map(Number);
+        return { ...o, disabled: (h * 60 + m) < now.mins };
+      });
+      const endOptions = _buildHourOptions().map(o => {
+        const [h, m] = o.value.split(':').map(Number);
+        // Disallow only exact match (overnight windows are valid)
+        return { ...o, disabled: (h * 60 + m) === startMins };
+      });
+      csSetOptions('deliveryStartTimeSelect', startOptions, currentStart);
+      csSetOptions('deliveryEndTimeSelect', endOptions, csGetValue('deliveryEndTimeSelect') || '17:00');
+    }
+
+    let _lastClockHour = -1;
+    let _lastClockMin = -1;
+    function updateTzClock() {
+      const tz = csGetValue('deliveryTimezoneSelect') || 'Europe/Madrid';
+      const now = getNowInTimezone(tz);
+      const el = document.getElementById('tzLiveTime');
+      if (el) el.textContent = now.hhmm;
+      if (now.hours !== _lastClockHour || Math.floor(now.minutes / 30) !== Math.floor(_lastClockMin / 30)) {
+        _lastClockHour = now.hours;
+        _lastClockMin = now.minutes;
+        rebuildTimeDropdowns();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initial population (no disabled state until DOMContentLoaded settles custom-select wiring)
+      csSetOptions('deliveryStartTimeSelect', _buildHourOptions(), '09:00');
+      csSetOptions('deliveryEndTimeSelect', _buildHourOptions(), '17:00');
+      // Rebuild with disabled state based on current time
+      setTimeout(() => {
+        rebuildTimeDropdowns();
+        updateTzClock();
+        csOnChange('deliveryTimezoneSelect', () => { _lastClockHour = -1; updateTzClock(); });
+        csOnChange('deliveryStartTimeSelect', () => rebuildTimeDropdowns());
+        setInterval(updateTzClock, 1000);
+      }, 0);
+    });
+
+    // ============ PAGE NAVIGATION ============
+    function showPage(page) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelector(`[data-page="${page}"]`).classList.add('active');
+      if (page === 'schedule') updateScheduleStatus();
+      if (page === 'processing') loadLeads();
+    }
+
+    // ============ SIDEBAR STATUS ============
+    function updateSidebarStatus(text, color) {
+      document.getElementById('sidebarDot').className = 'status-dot ' + color;
+      document.getElementById('sidebarStatusText').textContent = text;
+    }
+
+    // ============ ACCORDION PANELS ============
+    function togglePanel(headerEl) {
+      const opening = headerEl.classList.contains('collapsed');
+      headerEl.classList.toggle('collapsed');
+      const bodyWrap = headerEl.nextElementSibling;
+      if (!bodyWrap || !bodyWrap.classList.contains('panel-body-wrap')) return;
+      if (opening) {
+        // Expand: measure target height, animate from 0
+        bodyWrap.classList.remove('collapsed');
+        const h = bodyWrap.scrollHeight;
+        bodyWrap.style.height = '0px';
+        requestAnimationFrame(() => {
+          bodyWrap.style.height = h + 'px';
+          bodyWrap.addEventListener('transitionend', function handler() {
+            bodyWrap.style.height = '';
+            bodyWrap.removeEventListener('transitionend', handler);
+          });
+        });
+      } else {
+        // Collapse: set explicit height first, then animate to 0
+        bodyWrap.style.height = bodyWrap.scrollHeight + 'px';
+        requestAnimationFrame(() => {
+          bodyWrap.classList.add('collapsed');
+        });
+      }
+    }
+
+    // ============ SETUP / SETTINGS ============
+    let pollInterval = null;
+
+    function togglePw(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (input.type === 'password') { input.type = 'text'; btn.textContent = 'Hide'; }
+      else { input.type = 'password'; btn.textContent = 'Show'; }
+    }
+
+    function setStatus(elementId, message, type) {
+      const el = document.getElementById(elementId);
+      el.textContent = message;
+      el.className = 'field-status ' + type;
+    }
+
+    async function loadSettings() {
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+
+        if (data.geminiApiKey && data.geminiApiKey !== '') {
+          document.getElementById('setupGeminiKey').value = data.geminiApiKey;
+          setStatus('geminiStatus', 'Configured', 'valid');
+        }
+
+        if (data.googleSheetId) {
+          document.getElementById('setupSheetId').value = data.googleSheetUrl || data.googleSheetId;
+          setStatus('sheetStatus', 'Configured', 'valid');
+        }
+
+        const gmailBadge = document.getElementById('gmailSetupStatus');
+        const gmailEmailSpan = document.getElementById('gmailSetupEmail');
+        if (data.gmailConnected && data.gmailEmail) {
+          gmailBadge.textContent = 'Connected';
+          gmailBadge.className = 'badge badge-connected';
+          gmailEmailSpan.textContent = data.gmailEmail;
+          document.getElementById('disconnectGmailBtn').disabled = false;
+          loadSendAsAddresses();
+          updateSidebarStatus('Gmail connected', 'green');
+        } else {
+          gmailBadge.textContent = 'Not Connected';
+          gmailBadge.className = 'badge badge-disconnected';
+          gmailEmailSpan.textContent = '';
+          document.getElementById('disconnectGmailBtn').disabled = true;
+        }
+
+        const saBadge = document.getElementById('serviceAccountStatus');
+        const saEmail = document.getElementById('serviceAccountEmail');
+        if (data.serviceAccountConnected && data.serviceAccountEmail) {
+          saBadge.textContent = 'Connected';
+          saBadge.className = 'badge badge-connected';
+          saEmail.textContent = data.serviceAccountEmail;
+        } else {
+          saBadge.textContent = 'Not Connected';
+          saBadge.className = 'badge badge-disconnected';
+          saEmail.textContent = 'credentials.json not found';
+        }
+
+        // Load outreach profile into Outreach Profile panel
+        if (data.outreachProfile) {
+          loadOutreachProfile(data.outreachProfile);
+        }
+
+        // Load scheduling config into Delivery Settings panel
+        if (data.schedulingConfig) {
+          const sc = data.schedulingConfig;
+          const savedMode = sc.mode || 'drafts-only';
+          const modeInput = document.querySelector(`input[name="deliveryMode"][value="${savedMode}"]`);
+          if (modeInput) {
+            modeInput.checked = true;
+            highlightDeliveryModeLabels(savedMode);
+          }
+          if (sc.timezone) csSetValue('deliveryTimezoneSelect', sc.timezone);
+          if (sc.startTime) csSetValue('deliveryStartTimeSelect', sc.startTime);
+          if (sc.endTime) csSetValue('deliveryEndTimeSelect', sc.endTime);
+          if (sc.minInterval != null) document.getElementById('deliveryMinInterval').value = sc.minInterval;
+          if (sc.maxInterval != null) document.getElementById('deliveryMaxInterval').value = sc.maxInterval;
+          // Sync internal state and chip to saved default
+          _runDeliveryMode = savedMode;
+          updateDeliveryModeChip();
+          // Re-apply disabled state now that saved values are in place
+          if (typeof rebuildTimeDropdowns === 'function') {
+            rebuildTimeDropdowns();
+            updateTzClock();
+          }
+        }
+
+      } catch (err) {
+        console.error('Failed to load settings:', err);
+      }
+    }
+
+    // ============ OUTREACH PROFILE ============
+
+    let _outreachProfile = null; // full profile including presets
+
+    function loadOutreachProfile(profile) {
+      _outreachProfile = profile;
+      _pendingNewPreset = false;
+      rebuildPresetDropdown(profile);
+      applyPresetToForm(profile.activePreset);
+      updateOutreachProfileBadge();
+      syncOutreachSaveButtons();
+    }
+
+    function rebuildPresetDropdown(profile) {
+      const container = document.getElementById('outreachPresetOptions');
+      if (!container) return;
+      const builtinOrder = ['ecommerce-ops', 'seo-agency', 'dev-shop', 'cx-support'];
+      const allSlugs = [
+        ...builtinOrder.filter(s => profile.presets[s]),
+        ...Object.keys(profile.presets).filter(s => !builtinOrder.includes(s))
+      ];
+      const optionHTML = allSlugs.map(slug => {
+        const p = profile.presets[slug];
+        const isActive = slug === profile.activePreset;
+        return `<div class="cs-option${isActive ? ' selected' : ''}" data-value="${slug}" onclick="selectOutreachPreset('${slug}')" style="padding:10px 14px;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:space-between;">
+          <span>${p.name}${p.builtin ? '' : ' <span style="font-size:10px;color:var(--muted-foreground);">(custom)</span>'}</span>
+          ${!p.builtin ? `<button onclick="event.stopPropagation();deleteOutreachPresetBySlug('${slug}')" title="Delete" style="background:none;border:none;color:var(--error);cursor:pointer;padding:2px 4px;font-size:11px;">✕</button>` : ''}
+        </div>`;
+      }).join('');
+      // "+ New preset" always at the bottom
+      const newPresetBtn = `<div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:4px;padding:4px;">
+        <div onclick="createBlankPreset()" style="padding:8px 14px;cursor:pointer;font-size:12px;color:var(--chart-2);display:flex;align-items:center;gap:6px;border-radius:var(--radius-xs);transition:background 0.15s;" onmouseover="this.style.background='rgba(255,255,255,0.04)'" onmouseout="this.style.background='transparent'">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New preset
+        </div>
+      </div>`;
+      container.innerHTML = optionHTML + newPresetBtn;
+    }
+
+    function toggleOutreachPresetDropdown() {
+      const dd = document.getElementById('outreachPresetDropdown');
+      const sel = document.getElementById('outreachPresetSelect');
+      if (!dd || !sel) return;
+      const isOpen = dd.style.opacity === '1';
+      if (isOpen) {
+        closeOutreachPresetDropdown();
+      } else {
+        sel.classList.add('open');
+        dd.style.opacity = '1';
+        dd.style.pointerEvents = 'auto';
+        dd.style.transform = 'translateY(0)';
+        setTimeout(() => document.addEventListener('click', closeOutreachPresetDropdownOnClick, { once: true }), 0);
+      }
+    }
+
+    function closeOutreachPresetDropdown() {
+      const dd = document.getElementById('outreachPresetDropdown');
+      const sel = document.getElementById('outreachPresetSelect');
+      if (!dd) return;
+      if (sel) sel.classList.remove('open');
+      dd.style.opacity = '0';
+      dd.style.pointerEvents = 'none';
+      dd.style.transform = 'translateY(-4px)';
+    }
+
+    function closeOutreachPresetDropdownOnClick(e) {
+      const dd = document.getElementById('outreachPresetDropdown');
+      const trigger = document.querySelector('#outreachPresetSelect .custom-select-trigger');
+      if (dd && trigger && !dd.contains(e.target) && !trigger.contains(e.target)) {
+        closeOutreachPresetDropdown();
+      }
+    }
+
+    function selectOutreachPreset(slug) {
+      if (!_outreachProfile) return;
+      _outreachProfile.activePreset = slug;
+      _pendingNewPreset = false;
+      closeOutreachPresetDropdown();
+      rebuildPresetDropdown(_outreachProfile);
+      applyPresetToForm(slug);
+      updateOutreachProfileBadge();
+      syncOutreachSaveButtons();
+    }
+
+    function applyPresetToForm(slug) {
+      if (!_outreachProfile) return;
+      const preset = _outreachProfile.presets[slug];
+      if (!preset) return;
+      // Update label
+      document.getElementById('outreachPresetLabel').textContent = preset.name;
+      // Fill fields
+      document.getElementById('outreachPainPoints').value = preset.painPoints || '';
+      document.getElementById('outreachOffer').value = preset.offer || '';
+      // Set tone radio
+      const toneRadio = document.querySelector(`input[name="outreachTone"][value="${preset.tone || 'casual'}"]`);
+      if (toneRadio) { toneRadio.checked = true; updateOutreachToneHighlight(preset.tone || 'casual'); }
+      // Show/hide delete button for custom presets
+      const delBtn = document.getElementById('deleteOutreachPresetBtn');
+      if (delBtn) delBtn.style.display = preset.builtin ? 'none' : '';
+    }
+
+    function onOutreachToneChange() {
+      const tone = document.querySelector('input[name="outreachTone"]:checked')?.value;
+      if (tone) updateOutreachToneHighlight(tone);
+    }
+
+    function updateOutreachToneHighlight(tone) {
+      ['professional', 'casual', 'direct'].forEach(t => {
+        const label = document.getElementById(`tone-label-${t}`);
+        if (label) label.style.borderColor = t === tone ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.08)';
+      });
+    }
+
+    function updateOutreachProfileBadge() {
+      const badge = document.getElementById('outreachProfileStatus');
+      if (!badge || !_outreachProfile) return;
+      const active = _outreachProfile.presets[_outreachProfile.activePreset];
+      const painPoints = document.getElementById('outreachPainPoints')?.value?.trim();
+      const offer = document.getElementById('outreachOffer')?.value?.trim();
+      if (painPoints && offer) {
+        badge.textContent = active ? active.name : 'Custom';
+        badge.className = 'badge badge-connected';
+      } else {
+        badge.textContent = 'Not set';
+        badge.className = 'badge badge-warning';
+      }
+    }
+
+    async function saveOutreachProfile() {
+      if (!_outreachProfile) return;
+      const btn = document.getElementById('saveOutreachProfileBtn');
+      const badge = document.getElementById('outreachProfileStatus');
+      const slug = _outreachProfile.activePreset;
+      const preset = _outreachProfile.presets[slug];
+      const painPoints = document.getElementById('outreachPainPoints').value.trim();
+      const offer = document.getElementById('outreachOffer').value.trim();
+      const tone = document.querySelector('input[name="outreachTone"]:checked')?.value || 'casual';
+
+      if (preset && preset.builtin && (painPoints !== preset.painPoints || offer !== preset.offer || tone !== preset.tone)) {
+        // Editing a built-in — silently save as a modified copy
+        const newSlug = slug + '-custom-' + Date.now();
+        _outreachProfile.presets[newSlug] = { name: preset.name + ' (custom)', builtin: false, painPoints, offer, tone, reviewFocus: preset.reviewFocus };
+        _outreachProfile.activePreset = newSlug;
+      } else if (preset && !preset.builtin) {
+        // Update custom preset in place
+        preset.painPoints = painPoints;
+        preset.offer = offer;
+        preset.tone = tone;
+      }
+      // If unchanged built-in, just update active selection
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Saving...'; }
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ outreachProfile: _outreachProfile })
+        });
+        if (res.ok) {
+          showToast('Outreach profile saved', 'success');
+          badge.textContent = _outreachProfile.presets[_outreachProfile.activePreset]?.name || 'Saved';
+          badge.className = 'badge badge-connected';
+          rebuildPresetDropdown(_outreachProfile);
+        } else {
+          showToast('Save failed', 'error');
+        }
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Save'; }
+      }
+    }
+
+    async function saveOutreachProfileAsNew() {
+      if (!_outreachProfile) return;
+      // When saving a pending new preset, use the name already stored; otherwise ask
+      const activeSlug = _outreachProfile.activePreset;
+      const activePreset = _outreachProfile.presets[activeSlug];
+      const existingName = _pendingNewPreset && activePreset ? activePreset.name : null;
+      const name = existingName || window.prompt('Name for this preset:');
+      if (!name || !name.trim()) return;
+      const slug = _pendingNewPreset && activeSlug
+        ? activeSlug  // reuse the temp slug already created
+        : name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now();
+      const painPoints = document.getElementById('outreachPainPoints').value.trim();
+      const offer = document.getElementById('outreachOffer').value.trim();
+      const tone = document.querySelector('input[name="outreachTone"]:checked')?.value || 'casual';
+      const source = _outreachProfile.presets[activeSlug];
+      _outreachProfile.presets[slug] = { name: name.trim(), builtin: false, painPoints, offer, tone, reviewFocus: source?.reviewFocus || [] };
+      _outreachProfile.activePreset = slug;
+      _pendingNewPreset = false;
+      await saveOutreachProfile();
+      rebuildPresetDropdown(_outreachProfile);
+      applyPresetToForm(slug);
+      syncOutreachSaveButtons();
+    }
+
+    async function deleteOutreachPreset() {
+      const slug = _outreachProfile?.activePreset;
+      if (!slug || !_outreachProfile) return;
+      const preset = _outreachProfile.presets[slug];
+      if (!preset || preset.builtin) { showToast('Built-in presets cannot be deleted', 'error'); return; }
+      await deleteOutreachPresetBySlug(slug);
+    }
+
+    async function deleteOutreachPresetBySlug(slug) {
+      const ok = await openConfirmModal('Delete Preset', `Delete the preset <strong>${_outreachProfile.presets[slug]?.name}</strong>? This cannot be undone.`, 'Delete');
+      if (!ok) return;
+      try {
+        const res = await fetch(`/api/settings/preset/${encodeURIComponent(slug)}`, { method: 'DELETE' });
+        if (res.ok) {
+          delete _outreachProfile.presets[slug];
+          if (_outreachProfile.activePreset === slug) _outreachProfile.activePreset = 'ecommerce-ops';
+          rebuildPresetDropdown(_outreachProfile);
+          applyPresetToForm(_outreachProfile.activePreset);
+          updateOutreachProfileBadge();
+          syncOutreachSaveButtons();
+          showToast('Preset deleted', 'success');
+        } else {
+          const d = await res.json();
+          showToast(d.error || 'Delete failed', 'error');
+        }
+      } catch (e) {
+        showToast('Error: ' + e.message, 'error');
+      }
+    }
+
+    async function createBlankPreset() {
+      closeOutreachPresetDropdown();
+
+      if (!_outreachProfile) return;
+
+      // Styled modal to get the preset name
+      const name = await openInputModal('New Preset', 'e.g. My Agency, Logistics Ops…', 'Create');
+      if (!name) return;
+
+      const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now();
+      _outreachProfile.presets[slug] = {
+        name,
+        builtin: false,
+        painPoints: '',
+        offer: '',
+        tone: 'casual',
+        reviewFocus: []
+      };
+      _outreachProfile.activePreset = slug;
+
+      // Clear form fields
+      const ppEl = document.getElementById('outreachPainPoints');
+      const ofEl = document.getElementById('outreachOffer');
+      if (ppEl) ppEl.value = '';
+      if (ofEl) ofEl.value = '';
+
+      // Set tone to casual
+      const casualRadio = document.querySelector('input[name="outreachTone"][value="casual"]');
+      if (casualRadio) { casualRadio.checked = true; updateOutreachToneHighlight(); }
+
+      // Rebuild dropdown, update label + button states
+      _pendingNewPreset = true;
+      rebuildPresetDropdown(_outreachProfile);
+      applyPresetToForm(slug);
+      updateOutreachProfileBadge();
+      syncOutreachSaveButtons();
+
+      if (ppEl) ppEl.focus();
+    }
+
+    // true while user is filling in a brand-new unsaved preset
+    let _pendingNewPreset = false;
+
+    // Sync Save / Save as new preset enabled states
+    function syncOutreachSaveButtons() {
+      const saveBtn    = document.getElementById('saveOutreachProfileBtn');
+      const saveNewBtn = document.getElementById('saveOutreachAsNewBtn');
+      if (!saveBtn || !saveNewBtn) return;
+      if (_pendingNewPreset) {
+        // New preset not yet saved — only "Save as new preset" works
+        saveBtn.disabled    = true;
+        saveBtn.style.opacity = '0.35';
+        saveNewBtn.disabled   = false;
+        saveNewBtn.style.opacity = '';
+      } else {
+        // Existing preset — only "Save" works
+        saveBtn.disabled    = false;
+        saveBtn.style.opacity = '';
+        saveNewBtn.disabled   = true;
+        saveNewBtn.style.opacity = '0.35';
+      }
+    }
+
+    function highlightDeliveryModeLabels(mode) {
+      const map = { 'drafts-only': 'modeRadioDrafts', 'auto-schedule': 'modeRadioSchedule' };
+      document.querySelectorAll('#modeRadioDrafts, #modeRadioSchedule').forEach(label => {
+        label.style.borderColor = label.id === map[mode]
+          ? 'rgba(255,255,255,0.3)'
+          : 'rgba(255,255,255,0.08)';
+      });
+    }
+
+    // Update label borders whenever a delivery mode radio changes
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('input[name="deliveryMode"]').forEach(radio => {
+        radio.addEventListener('change', () => highlightDeliveryModeLabels(radio.value));
+      });
+    });
+
+    async function saveDeliverySettings() {
+      const mode = document.querySelector('input[name="deliveryMode"]:checked')?.value || 'drafts-only';
+      const timezone = csGetValue('deliveryTimezoneSelect') || 'Europe/Madrid';
+      const startTime = csGetValue('deliveryStartTimeSelect') || '09:00';
+      const endTime = csGetValue('deliveryEndTimeSelect') || '17:00';
+      const minInterval = parseInt(document.getElementById('deliveryMinInterval').value) || 15;
+      const maxInterval = parseInt(document.getElementById('deliveryMaxInterval').value) || 25;
+      const badge = document.getElementById('deliverySettingsStatus');
+
+      // Validate: start not in past (in selected timezone), end > start
+      const now = getNowInTimezone(timezone);
+      const [sh, sm] = startTime.split(':').map(Number);
+      const [eh, em] = endTime.split(':').map(Number);
+      const startMins = sh * 60 + sm;
+      const endMins = eh * 60 + em;
+      if (startMins < now.mins) {
+        badge.textContent = 'Start already passed';
+        badge.className = 'badge badge-error';
+        showToast(`Start time ${startTime} is before current time in ${timezone} (${now.hhmm})`, 'error');
+        return;
+      }
+      if (endMins === startMins) {
+        badge.textContent = 'End must differ from start';
+        badge.className = 'badge badge-error';
+        showToast('End time cannot equal start time', 'error');
+        return;
+      }
+      // end < start is allowed = overnight window
+      if (minInterval > maxInterval) {
+        badge.textContent = 'Min > Max interval';
+        badge.className = 'badge badge-error';
+        showToast(`Min interval (${minInterval}) must be ≤ Max interval (${maxInterval})`, 'error');
+        return;
+      }
+      if (minInterval < 1 || maxInterval < 1) {
+        badge.textContent = 'Interval must be ≥ 1';
+        badge.className = 'badge badge-error';
+        showToast('Intervals must be at least 1 minute', 'error');
+        return;
+      }
+
+      badge.textContent = 'Saving...';
+      badge.className = 'badge badge-warning';
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ schedulingConfig: { mode, timezone, startTime, endTime, minInterval, maxInterval } })
+        });
+        if (res.ok) {
+          badge.textContent = 'Saved';
+          badge.className = 'badge badge-connected';
+          _runDeliveryMode = mode;
+          updateDeliveryModeChip();
+          highlightDeliveryModeLabels(mode);
+          showToast('Delivery settings saved', 'success');
+          setTimeout(() => { badge.textContent = 'Saved'; badge.className = 'badge badge-idle'; }, 3000);
+        } else {
+          badge.textContent = 'Error';
+          badge.className = 'badge badge-error';
+          showToast('Failed to save settings', 'error');
+        }
+      } catch (err) {
+        badge.textContent = 'Error';
+        badge.className = 'badge badge-error';
+        showToast('Error: ' + err.message, 'error');
+        console.error(err);
+      }
+    }
+
+    async function testGeminiKey() {
+      const key = document.getElementById('setupGeminiKey').value;
+      setStatus('geminiStatus', 'Testing...', 'pending');
+      try {
+        const res = await fetch('/api/settings/test-gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ apiKey: key })
+        });
+        const data = await res.json();
+        setStatus('geminiStatus', data.valid ? 'Valid' : 'Invalid - ' + (data.error || 'Unknown'), data.valid ? 'valid' : 'invalid');
+      } catch (err) {
+        setStatus('geminiStatus', 'Error: ' + err.message, 'invalid');
+      }
+    }
+
+    async function testSheetConnection() {
+      const sheetId = document.getElementById('setupSheetId').value;
+      setStatus('sheetStatus', 'Testing...', 'pending');
+      try {
+        const res = await fetch('/api/settings/test-sheet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sheetId })
+        });
+        const data = await res.json();
+        setStatus('sheetStatus', data.valid ? data.rowCount + ' rows found' : 'Invalid - ' + (data.error || 'Unknown'), data.valid ? 'valid' : 'invalid');
+      } catch (err) {
+        setStatus('sheetStatus', 'Error: ' + err.message, 'invalid');
+      }
+    }
+
+    async function connectGmail() {
+      const btn = document.getElementById('connectGmailBtn');
+      btn.disabled = true;
+      btn.textContent = 'Connecting...';
+      const gmailBadge = document.getElementById('gmailSetupStatus');
+      gmailBadge.textContent = 'Authorizing...';
+      gmailBadge.className = 'badge badge-running';
+
+      try {
+        await fetch('/api/settings/gmail-auth', { method: 'POST' });
+        let attempts = 0;
+        const checkInterval = setInterval(async () => {
+          attempts++;
+          try {
+            const res = await fetch('/api/draft/check');
+            const data = await res.json();
+            if (data.connected) {
+              clearInterval(checkInterval);
+              gmailBadge.textContent = 'Connected';
+              gmailBadge.className = 'badge badge-connected';
+              document.getElementById('gmailSetupEmail').textContent = data.email;
+              document.getElementById('disconnectGmailBtn').disabled = false;
+              btn.disabled = false;
+              btn.textContent = 'Connect';
+              loadSendAsAddresses();
+              updateSidebarStatus('Gmail connected', 'green');
+            }
+          } catch (e) { /* keep polling */ }
+          if (attempts > 60) {
+            clearInterval(checkInterval);
+            gmailBadge.textContent = 'Timeout';
+            gmailBadge.className = 'badge badge-error';
+            btn.disabled = false;
+            btn.textContent = 'Connect';
+          }
+        }, 2000);
+      } catch (err) {
+        gmailBadge.textContent = 'Error';
+        gmailBadge.className = 'badge badge-error';
+        btn.disabled = false;
+        btn.textContent = 'Connect';
+      }
+    }
+
+    async function disconnectGmail() {
+      if (!confirm('Disconnect Gmail account?')) return;
+      try {
+        const res = await fetch('/api/settings/gmail-disconnect', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('gmailSetupStatus').textContent = 'Not Connected';
+          document.getElementById('gmailSetupStatus').className = 'badge badge-disconnected';
+          document.getElementById('gmailSetupEmail').textContent = '';
+          document.getElementById('disconnectGmailBtn').disabled = true;
+          document.getElementById('sendFromSection').classList.add('hidden');
+          updateSidebarStatus('Idle', 'gray');
+        }
+      } catch (err) { console.error(err); }
+    }
+
+    // Auto-save settings on input blur (no Save button needed)
+    let _autoSaveTimer = null;
+    function autoSaveSettings() {
+      clearTimeout(_autoSaveTimer);
+      _autoSaveTimer = setTimeout(async () => {
+        const geminiKey = document.getElementById('setupGeminiKey').value;
+        const sheetId = document.getElementById('setupSheetId').value;
+        try {
+          await fetch('/api/settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ geminiApiKey: geminiKey, googleSheetId: sheetId })
+          });
+        } catch (err) {
+          console.error('Auto-save failed:', err);
+        }
+      }, 500);
+    }
+
+    // Attach auto-save listeners once DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const geminiInput = document.getElementById('setupGeminiKey');
+      const sheetInput = document.getElementById('setupSheetId');
+      if (geminiInput) geminiInput.addEventListener('blur', autoSaveSettings);
+      if (sheetInput) sheetInput.addEventListener('blur', autoSaveSettings);
+    });
+
+    // Input modal — reuses confirmModal, adds a text input field
+    function openInputModal(title, placeholder, actionText) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalBody').innerHTML =
+        `<input id="inputModalField" type="text" placeholder="${esc(placeholder || '')}"
+          style="width:100%;box-sizing:border-box;background:var(--input);border:1px solid rgba(255,255,255,0.12);
+          border-radius:var(--radius-xs);padding:9px 12px;color:var(--foreground);font-size:13px;outline:none;
+          font-family:var(--font-sans);" autofocus>`;
+      document.getElementById('confirmModalAction').textContent = actionText || 'Create';
+      document.getElementById('confirmModal').classList.add('open');
+      requestAnimationFrame(() => {
+        const f = document.getElementById('inputModalField');
+        if (f) { f.focus(); f.select(); }
+      });
+      return new Promise(resolve => {
+        _confirmResolve = null;
+        const confirm = () => {
+          const val = (document.getElementById('inputModalField')?.value || '').trim();
+          document.getElementById('confirmModal').classList.remove('open');
+          resolve(val || null);
+        };
+        document.getElementById('confirmModalAction').onclick = confirm;
+        const field = document.getElementById('inputModalField');
+        if (field) field.onkeydown = e => { if (e.key === 'Enter') confirm(); };
+      });
+    }
+
+    // Confirm modal helpers
+    let _confirmResolve = null;
+    function openConfirmModal(title, body, actionText) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalBody').innerHTML = body;
+      document.getElementById('confirmModalAction').textContent = actionText || 'Confirm';
+      document.getElementById('confirmModal').classList.add('open');
+      return new Promise(resolve => {
+        _confirmResolve = resolve;
+        document.getElementById('confirmModalAction').onclick = () => {
+          _confirmResolve = null;
+          document.getElementById('confirmModal').classList.remove('open');
+          resolve(true);
+        };
+      });
+    }
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').classList.remove('open');
+      if (_confirmResolve) { _confirmResolve(false); _confirmResolve = null; }
+    }
+
+    function triggerImport() {
+      const fileInput = document.getElementById('importFile');
+      fileInput.onchange = async () => {
+        if (!fileInput.files.length) return;
+        const fileName = fileInput.files[0].name;
+        const hasExistingLeads = allLeads && allLeads.length > 0;
+
+        if (!hasExistingLeads) {
+          // No existing leads — skip Replace/Append choice, just import
+          const body =
+            `<strong>${esc(fileName)}</strong>` +
+            '<br><br><span style="color: var(--muted-foreground);">Only leads with both <strong>email</strong> and <strong>website</strong> will be imported.</span>' +
+            '<br><br><span style="color: var(--warning);">CSV format: firstName, lastName, company, email, website.</span>';
+
+          const ok = await openConfirmModal('Import Leads', body, 'Import');
+          if (ok) {
+            await importAndSync('append');
+          } else {
+            fileInput.value = '';
+          }
+          return;
+        }
+
+        // Existing leads — show Replace / Append / Cancel
+        const body =
+          `<strong>${esc(fileName)}</strong>` +
+          '<br><br><span style="color: var(--muted-foreground);">Only leads with both <strong>email</strong> and <strong>website</strong> will be imported.</span>' +
+          '<br><span style="color: var(--muted-foreground);">Duplicates (same email) are automatically skipped when appending.</span>' +
+          '<br><br><span style="color: var(--warning);">CSV format: firstName, lastName, company, email, website.</span>';
+
+        // Show modal with Replace / Append buttons
+        document.getElementById('confirmModalTitle').textContent = 'Import Leads';
+        document.getElementById('confirmModalBody').innerHTML = body;
+        document.getElementById('confirmModal').classList.add('open');
+
+        const actionBtn = document.getElementById('confirmModalAction');
+        const cancelBtn = document.getElementById('confirmModalCancel');
+        const replaceBtn = document.getElementById('confirmModalReplace');
+
+        replaceBtn.classList.remove('hidden');
+        replaceBtn.textContent = 'Replace All';
+        actionBtn.textContent = 'Append New';
+
+        const result = await new Promise(resolve => {
+          _confirmResolve = null;
+          const cleanup = () => { replaceBtn.classList.add('hidden'); };
+          replaceBtn.onclick = () => { cleanup(); resolve('replace'); closeConfirmModal(); };
+          actionBtn.onclick = () => { cleanup(); resolve('append'); closeConfirmModal(); };
+          cancelBtn.onclick = () => { cleanup(); resolve(null); closeConfirmModal(); };
+        });
+
+        if (result) {
+          await importAndSync(result);
+        } else {
+          fileInput.value = '';
+        }
+      };
+      fileInput.click();
+    }
+
+    async function importAndSync(mode) {
+      const fileInput = document.getElementById('importFile');
+      const resultEl = document.getElementById('importResult');
+      const btn = document.getElementById('importBtn');
+
+      if (!fileInput.files.length) return;
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      formData.append('mode', mode || 'append');
+
+      btn.disabled = true;
+      resultEl.style.color = 'var(--muted-foreground)';
+      resultEl.textContent = 'Uploading...';
+
+      try {
+        const res = await fetch('/api/import-leads', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!data.success) {
+          resultEl.style.color = 'var(--error)';
+          resultEl.textContent = data.error || 'Import failed';
+          btn.disabled = false;
+          return;
+        }
+
+        resultEl.style.color = 'var(--success)';
+        const parts = [];
+        if (data.mode === 'replace' && data.cleared > 0) parts.push(`Replaced ${data.cleared} existing leads.`);
+        parts.push(`Imported ${data.imported} leads.`);
+        if (data.duplicates > 0) parts.push(`${data.duplicates} duplicates skipped.`);
+        if (data.skipped > 0) parts.push(`${data.skipped} missing fields.`);
+        resultEl.textContent = parts.join(' ');
+        fileInput.value = '';
+
+        // Show summary modal if there are details worth showing
+        const hasDetails = (data.skipped > 0 && data.skippedDetails?.length > 0) || data.duplicates > 0;
+        if (hasDetails) {
+          let summaryHtml = `<p style="margin-bottom:10px;color:var(--success);">Successfully imported <strong>${data.imported}</strong> leads.</p>`;
+          if (data.mode === 'replace' && data.cleared > 0) {
+            summaryHtml += `<p style="margin-bottom:8px;color:var(--muted-foreground);">Cleared <strong>${data.cleared}</strong> previous leads before import.</p>`;
+          }
+          if (data.duplicates > 0) {
+            summaryHtml += `<p style="margin-bottom:8px;color:var(--info);"><strong>${data.duplicates}</strong> duplicate(s) skipped (email already exists).</p>`;
+          }
+          if (data.skipped > 0 && data.skippedDetails?.length > 0) {
+            const details = data.skippedDetails.slice(0, 10).map(d =>
+              `<li><strong>${esc(d.name)}</strong> — missing ${d.missing.join(', ')}</li>`
+            ).join('');
+            const extra = data.skippedDetails.length > 10 ? `<li style="color:var(--muted-foreground);">...and ${data.skippedDetails.length - 10} more</li>` : '';
+            summaryHtml += `<p style="margin-bottom:8px;color:var(--warning);">${data.skipped} leads skipped (missing email):</p>`;
+            summaryHtml += `<ul style="font-size:12px;max-height:200px;overflow-y:auto;padding-left:18px;line-height:1.8;">${details}${extra}</ul>`;
+          }
+          openConfirmModal('Import Summary', summaryHtml, 'Got it');
+        }
+
+        setTimeout(async () => {
+          await loadLeads();
+          showPage('process');
+          btn.disabled = false;
+          resultEl.textContent = '';
+        }, data.skipped > 0 ? 100 : 800);
+
+      } catch (err) {
+        resultEl.style.color = 'var(--error)';
+        resultEl.textContent = 'Error: ' + err.message;
+        btn.disabled = false;
+      }
+    }
+
+    async function loadSendAsAddresses() {
+      try {
+        const res = await fetch('/api/settings/gmail-send-as');
+        const data = await res.json();
+        const section = document.getElementById('sendFromSection');
+        if (data.addresses && data.addresses.length > 0) {
+          section.classList.remove('hidden');
+          const options = data.addresses.map(a => ({
+            value: a.email,
+            label: a.email + (a.isPrimary ? ' (primary)' : '')
+          }));
+          const saved = data.savedSender || options[0]?.value || '';
+          csSetOptions('sendFromEmail', options, saved);
+          csOnChange('sendFromEmail', () => saveSendFrom());
+        }
+      } catch (err) {
+        console.log('Could not load send-as addresses:', err);
+      }
+    }
+
+    async function saveSendFrom() {
+      const email = csGetValue('sendFromEmail');
+      try {
+        await fetch('/api/settings/send-from', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        setStatus('sendFromStatus', 'Saved', 'valid');
+        setTimeout(() => setStatus('sendFromStatus', '', 'pending'), 2000);
+      } catch (err) {
+        setStatus('sendFromStatus', 'Error', 'invalid');
+      }
+    }
+
+    // Init
+    loadSettings();
+
+    // ============ PROCESSING ============
+
+    let allLeads = [];
+    let currentPage = 1;
+    const LEADS_PER_PAGE = 15;
+    let activeLeadFilter = 'all';
+    let leadSearchQuery = '';
+    let leadsTimezone = 'America/New_York';
+
+    async function loadLeads() {
+      const loading = document.getElementById('leadsLoading');
+      const empty = document.getElementById('leadsEmpty');
+      const wrap = document.getElementById('leadsTableWrap');
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      wrap.classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/leads');
+        const data = await res.json();
+        allLeads = data.leads || [];
+        if (data.timezone) leadsTimezone = data.timezone;
+
+        loading.classList.add('hidden');
+        if (allLeads.length === 0) {
+          empty.classList.remove('hidden');
+          return;
+        }
+
+        wrap.classList.remove('hidden');
+        currentPage = 1;
+        updateFilterCounts();
+        renderLeadsTable(getFilteredLeads());
+      } catch (err) {
+        loading.textContent = 'Failed to load leads: ' + err.message;
+      }
+    }
+
+    function setLeadFilter(filter, btn) {
+      activeLeadFilter = filter;
+      // Update toggle active state within this filter bar's toggle group
+      const group = btn.closest('.btn-toggle-group');
+      group.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentPage = 1;
+      // Reset selection state when switching filters
+      window._selectAllMode = false;
+      document.getElementById('selAll')?.classList.remove('active');
+      applyLeadFilters();
+    }
+
+    function applyLeadFilters() {
+      leadSearchQuery = (document.getElementById('leadSearchInput')?.value || '').toLowerCase().trim();
+      currentPage = 1;
+      updateFilterCounts();
+      renderLeadsTable(getFilteredLeads());
+    }
+
+    function _leadCategory(lead) {
+      const s = (lead.status || '').toLowerCase();
+      if (s.includes('sent')) return 'sent';
+      if (s.includes('scheduled')) return 'scheduled';
+      if (s.includes('drafted') || s.includes('generated')) return 'ready';
+      if (s.includes('skipped')) return 'skipped';
+      if (s.includes('failed')) return 'failed';
+      if (s.includes('processing')) return 'processing';
+      // New / unprocessed
+      return 'new';
+    }
+
+    function updateFilterCounts() {
+      const counts = { all: allLeads.length, new: 0, ready: 0, scheduled: 0, sent: 0, skipped: 0, failed: 0 };
+      allLeads.forEach(lead => {
+        const cat = _leadCategory(lead);
+        if (counts[cat] !== undefined) counts[cat]++;
+      });
+      Object.keys(counts).forEach(key => {
+        const el = document.getElementById('fc-' + key);
+        if (el) el.textContent = counts[key] > 0 ? counts[key] : '';
+      });
+      // Dim zero-count filter buttons (except All)
+      document.querySelectorAll('#filterToggleGroup .btn-toggle').forEach(btn => {
+        const countEl = btn.querySelector('.filter-count');
+        if (countEl && !btn.classList.contains('active')) {
+          btn.style.opacity = countEl.textContent === '' ? '0.4' : '';
+        } else {
+          btn.style.opacity = '';
+        }
+      });
+    }
+
+    function getFilteredLeads() {
+      let filtered = allLeads;
+
+      // Status filter
+      if (activeLeadFilter !== 'all') {
+        filtered = filtered.filter(lead => _leadCategory(lead) === activeLeadFilter);
+      }
+
+      // Search filter
+      if (leadSearchQuery) {
+        filtered = filtered.filter(lead => {
+          const haystack = [lead.firstName, lead.lastName, lead.company, lead.email, lead.website, lead.status].filter(Boolean).join(' ').toLowerCase();
+          return haystack.includes(leadSearchQuery);
+        });
+      }
+
+      return filtered;
+    }
+
+    function renderLeadsTable(leads) {
+      if (!leads) leads = getFilteredLeads();
+      // Update leads count label
+      const countLabel = document.getElementById('leadsCountLabel');
+      if (countLabel) countLabel.textContent = allLeads.length > 0 ? `${allLeads.length} total` : '';
+      // Show Reason column only for skipped filter
+      const table = document.getElementById('leadsTable');
+      if (table) table.classList.toggle('reason-col-hidden', activeLeadFilter !== 'skipped');
+      // Reset Select All button — it's only active when explicitly toggled, not on re-render
+      if (!window._selectAllMode) document.getElementById('selAll')?.classList.remove('active');
+      // Sort: unprocessed first, processed at bottom
+      const sorted = [...leads].sort((a, b) => {
+        const aProc = isProcessed(a.status);
+        const bProc = isProcessed(b.status);
+        if (aProc !== bProc) return aProc ? 1 : -1;
+        return a.rowNumber - b.rowNumber;
+      });
+
+      const totalPages = Math.ceil(sorted.length / LEADS_PER_PAGE);
+      if (currentPage > totalPages) currentPage = totalPages;
+      const start = (currentPage - 1) * LEADS_PER_PAGE;
+      const pageLeads = sorted.slice(start, start + LEADS_PER_PAGE);
+
+      const tbody = document.getElementById('leadsBody');
+      tbody.innerHTML = pageLeads.map(lead => {
+        const name = [lead.firstName, lead.lastName].filter(Boolean).join(' ') || '—';
+        const proc = isProcessed(lead.status);
+
+        const hasDraft = !!lead.emailDraft && lead.emailDraft !== 'N/A';
+        const canRedraft = !!lead.trustpilotUrl;
+
+        return `<tr data-row="${lead.rowNumber}" class="${proc ? 'lead-done' : ''}">
+          <td style="padding-left: 14px;">
+            <input type="checkbox" class="lead-check" value="${lead.rowNumber}" onchange="updateSelectedCount()" ${proc ? 'disabled' : ''} style="accent-color: var(--chart-2); cursor: ${proc ? 'not-allowed' : 'pointer'};">
+          </td>
+          <td style="color: var(--foreground); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${esc(name)}">${esc(name)}</td>
+          <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${esc(lead.company)}">${esc(lead.company)}</td>
+          <td style="font-family: var(--font-mono); font-size: 11.5px; color: var(--chart-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${esc(lead.email)}">${esc(lead.email)}</td>
+          <td style="font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${esc(lead.website)}">${lead.website ? esc(lead.website.replace(/^https?:\/\//, '')) : ''}</td>
+          <td style="font-size: 11px; color: var(--muted-foreground);">
+            ${lead.scheduledTime
+              ? `<span id="sched-${lead.rowNumber}" style="font-size:11px;">${formatLeadScheduledTime(lead.scheduledTime)}</span>`
+              : (() => {
+                  const s = (lead.status || '').toLowerCase();
+                  if (s === 'sent') return `<span class="lead-status lead-status-done" style="font-size:11px;">Sent</span>`;
+                  if (s === 'expired') return `<span class="lead-status lead-status-skipped" style="font-size:11px;">Expired</span>`;
+                  return '<span style="opacity:0.3;">—</span>';
+                })()}
+          </td>
+          <td class="reason-col" style="font-size: 10px; color: var(--warning); opacity: 0.8;">
+            ${(() => {
+              const s = (lead.status || '').toLowerCase();
+              if (s.includes('skipped')) {
+                const reason = (lead.status || '').replace(/^skipped\s*[-–—:]\s*/i, '').trim() || 'Skipped';
+                return `<span title="${esc(lead.status)}">${esc(reason)}</span>`;
+              }
+              return '';
+            })()}
+          </td>
+          <td style="padding: 0 10px;">
+            ${hasDraft ? `<div class="row-actions-wrap" id="actions-wrap-${lead.rowNumber}">
+              <button class="row-actions-trigger" onclick="toggleRowActions(${lead.rowNumber}, this)" title="Actions">&#xFE19;</button>
+              <div class="row-actions-dropdown" id="actions-dd-${lead.rowNumber}">
+                <button class="row-action-view" onclick="closeAllRowActions(); viewDraft(${lead.rowNumber})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> View Draft</button>
+                ${lead.status !== 'Sent' ? `<button class="row-action-send" onclick="closeAllRowActions(); confirmSendNow(${lead.rowNumber})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send Now</button>` : ''}
+                ${canRedraft ? `<button class="row-action-rewrite" onclick="closeAllRowActions(); confirmRewrite(${lead.rowNumber})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg> Rewrite Draft</button>` : ''}
+                ${lead.scheduledTime && lead.status !== 'Sent' ? `<div class="row-actions-sep"></div><button class="row-action-rewrite" onclick="closeAllRowActions(); editScheduleTime(${lead.rowNumber}, '${esc(lead.company)}', '${esc(lead.email)}')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Modify Schedule</button>
+                <button class="row-action-cancel" onclick="closeAllRowActions(); confirmCancelSchedule(${lead.rowNumber})">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Cancel Schedule</button>` : ''}
+                <div class="row-actions-sep"></div>
+                <button class="row-action-cancel" onclick="closeAllRowActions(); confirmDeleteLead(${lead.rowNumber}, '${esc(lead.company)}')">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg> Delete Lead</button>
+              </div>
+            </div>` : '<span style="opacity:0.2;">—</span>'}
+          </td>
+        </tr>`;
+      }).join('');
+
+      // Render pagination
+      renderPagination(sorted.length, totalPages);
+    }
+
+    function renderPagination(total, totalPages) {
+      let pag = document.getElementById('leadsPagination');
+      if (!pag) {
+        pag = document.createElement('div');
+        pag.id = 'leadsPagination';
+        pag.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 12px; color: var(--muted-foreground);';
+        const wrap = document.getElementById('leadsTableWrap');
+        wrap.parentNode.insertBefore(pag, wrap.nextSibling);
+      }
+      if (totalPages <= 1) { pag.innerHTML = `<span>${total} leads</span>`; return; }
+
+      let html = `<span>${total} leads</span><span style="margin: 0 8px;">|</span>`;
+      html += `<button class="btn btn-ghost btn-sm" onclick="goToPage(${currentPage - 1})" ${currentPage <= 1 ? 'disabled' : ''} style="padding: 2px 8px; font-size: 11px;">&laquo;</button>`;
+      for (let p = 1; p <= totalPages; p++) {
+        const active = p === currentPage ? 'background: var(--chart-2); color: #fff; border-radius: var(--radius-xs);' : '';
+        html += `<button class="btn btn-ghost btn-sm" onclick="goToPage(${p})" style="padding: 2px 10px; font-size: 11px; ${active}">${p}</button>`;
+      }
+      html += `<button class="btn btn-ghost btn-sm" onclick="goToPage(${currentPage + 1})" ${currentPage >= totalPages ? 'disabled' : ''} style="padding: 2px 8px; font-size: 11px;">&raquo;</button>`;
+      pag.innerHTML = html;
+    }
+
+    function goToPage(page) {
+      const totalPages = Math.ceil(allLeads.length / LEADS_PER_PAGE);
+      if (page < 1 || page > totalPages) return;
+      currentPage = page;
+      renderLeadsTable(allLeads);
+    }
+
+    function isProcessed(status) {
+      if (!status) return false;
+      const s = status.toLowerCase();
+      return ['processed', 'done', 'emailed', 'drafted', 'email', 'sent', 'skipped', 'generated'].some(k => s.includes(k));
+    }
+
+    function esc(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function getSelectedRows() {
+      // If "Select All" mode is active, return rows from the current filtered view
+      if (window._selectAllMode) {
+        return getFilteredLeads().filter(l => !isProcessed(l.status)).map(l => l.rowNumber);
+      }
+      return [...document.querySelectorAll('.lead-check:checked')].map(cb => parseInt(cb.value));
+    }
+
+    function updateSelectedCount() {
+      window._selectAllMode = false; // Reset when manually changing selection
+      document.getElementById('selAll')?.classList.remove('active');
+      const count = [...document.querySelectorAll('.lead-check:checked')].length;
+      document.getElementById('selectedCount').textContent = count + ' selected';
+    }
+
+    function setActiveSelectMode(btnId) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      const group = btn.closest('.btn-toggle-group');
+      const wasActive = btn.classList.contains('active');
+      if (group) group.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+      if (!wasActive) btn.classList.add('active');
+      return wasActive; // true = was toggled off
+    }
+
+    function deselectAll() {
+      document.querySelectorAll('.lead-check').forEach(cb => { cb.checked = false; });
+      document.getElementById('selectAll').checked = false;
+      window._selectAllMode = false;
+      document.getElementById('selAll')?.classList.remove('active');
+      updateSelectedCount();
+    }
+
+    function selectUnprocessed() {
+      if (setActiveSelectMode('selUnprocessed')) { deselectAll(); return; }
+      document.querySelectorAll('.lead-check').forEach(cb => {
+        cb.checked = !cb.disabled;
+      });
+      document.getElementById('selectAll').checked = false;
+      window._selectAllMode = false;
+      updateSelectedCount();
+    }
+
+    function selectPage() {
+      if (setActiveSelectMode('selPage')) { deselectAll(); return; }
+      document.querySelectorAll('.lead-check').forEach(cb => {
+        if (!cb.disabled) cb.checked = true;
+        else cb.checked = true;
+      });
+      document.getElementById('selectAll').checked = true;
+      window._selectAllMode = false;
+      updateSelectedCount();
+    }
+
+    function selectAllLeads() {
+      const btn = document.getElementById('selAll');
+      const wasActive = btn && btn.classList.contains('active');
+      if (wasActive) {
+        btn.classList.remove('active');
+        deselectAll();
+        return;
+      }
+      if (btn) btn.classList.add('active');
+      document.querySelectorAll('.lead-check').forEach(cb => { cb.checked = true; });
+      const headerCb = document.getElementById('selectAll');
+      if (headerCb) headerCb.checked = true;
+      window._selectAllMode = true;
+      const total = getFilteredLeads().filter(l => !isProcessed(l.status)).length;
+      document.getElementById('selectedCount').textContent = total + ' selected (all)';
+    }
+
+    function toggleSelectAll(checked) {
+      document.querySelectorAll('.lead-check').forEach(cb => {
+        if (!cb.disabled) cb.checked = checked;
+      });
+      updateSelectedCount();
+    }
+
+    // Track the per-run delivery mode override
+    let _runDeliveryMode = null; // null = use saved default
+
+    function goToDeliverySettings() {
+      showPage('setup');
+      // Find the Delivery Settings panel header and open it if collapsed
+      const headers = document.querySelectorAll('#page-setup .panel-header.collapsible');
+      for (const h of headers) {
+        if (h.textContent.includes('Delivery Settings')) {
+          if (h.classList.contains('collapsed')) togglePanel(h);
+          h.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          break;
+        }
+      }
+    }
+
+    function updateDeliveryModeChip() {
+      const chip = document.getElementById('deliveryModeChip');
+      if (chip) chip.textContent = _runDeliveryMode === 'auto-schedule' ? 'Auto-schedule' : 'Drafts only';
+    }
+
+    async function startProcessing() {
+      const rows = getSelectedRows();
+      if (rows.length === 0) {
+        addLog('No leads selected. Select rows to process.');
+        return;
+      }
+      const deliveryMode = _runDeliveryMode; // null = server uses saved config
+      try {
+        const body = { rows };
+        if (deliveryMode) body.deliveryMode = deliveryMode;
+        const res = await fetch('/api/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (res.ok) {
+          document.getElementById('startBtn').disabled = true;
+          document.getElementById('stopBtn').disabled = false;
+          document.getElementById('progressSection').classList.remove('hidden');
+          updateSidebarStatus('Processing...', 'green');
+          startPolling();
+        } else {
+          addLog('Error: ' + (data.error || 'Failed to start'));
+        }
+      } catch (err) { addLog('Error: ' + err.message); }
+    }
+
+    async function stopProcessing() {
+      try { await fetch('/api/stop', { method: 'POST' }); } catch (err) { console.error(err); }
+    }
+
+    function startPolling() {
+      pollInterval = setInterval(updateStatus, 1000);
+      updateStatus();
+    }
+
+    async function updateStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+
+        const progress = data.total > 0 ? (data.progress / data.total) * 100 : 0;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressLabel').textContent = `${data.progress} / ${data.total}`;
+        document.getElementById('currentCompany').textContent = data.current || '';
+        document.getElementById('kpiProcessed').textContent = data.progress;
+        document.getElementById('successCount').textContent = data.results.successful;
+        document.getElementById('skippedCount').textContent = data.results.skipped;
+        document.getElementById('failedCount').textContent = data.results.failed;
+
+        // Update per-lead statuses from job data
+        if (data.leads && data.leads.length > 0) {
+          data.leads.forEach(lead => {
+            const statusEl = document.getElementById('lead-status-' + lead.rowNumber);
+            const detailEl = document.getElementById('lead-detail-' + lead.rowNumber);
+            const row = document.querySelector(`tr[data-row="${lead.rowNumber}"]`);
+            if (!statusEl) return;
+
+            const statusMap = {
+              queued: { cls: 'lead-status-queued', label: 'Queued' },
+              processing: { cls: 'lead-status-processing', label: 'Processing' },
+              done: { cls: 'lead-status-done', label: 'Done' },
+              skipped: { cls: 'lead-status-skipped', label: 'Skipped' },
+              failed: { cls: 'lead-status-failed', label: 'Failed' }
+            };
+            const info = statusMap[lead.status] || { cls: 'lead-status-none', label: lead.status || 'Queued' };
+            const dot = lead.status === 'processing' ? '<span class="pulse-dot"></span> ' : '';
+            statusEl.className = 'lead-status ' + info.cls;
+            statusEl.innerHTML = dot + info.label;
+            if (detailEl && lead.detail) {
+              const full = lead.detail;
+              if (full.length > 80) {
+                detailEl.textContent = full.substring(0, 77) + '...';
+                detailEl.classList.add('clickable');
+                detailEl.onclick = () => openDetailModal(lead.company || 'Lead', full);
+              } else {
+                detailEl.textContent = full;
+                detailEl.classList.remove('clickable');
+                detailEl.onclick = null;
+              }
+            } else if (detailEl) {
+              detailEl.textContent = '';
+            }
+
+            if (row) {
+              row.classList.toggle('lead-processing', lead.status === 'processing');
+              row.classList.toggle('lead-done', lead.status === 'done');
+            }
+          });
+        }
+
+        const badge = document.getElementById('statusBadge');
+        if (data.running) {
+          badge.textContent = 'Processing';
+          badge.className = 'badge badge-running';
+        } else if (data.progress > 0) {
+          badge.textContent = 'Complete';
+          badge.className = 'badge badge-success';
+          document.getElementById('startBtn').disabled = false;
+          document.getElementById('stopBtn').disabled = true;
+          updateSidebarStatus('Idle', 'gray');
+          if (pollInterval) { clearInterval(pollInterval); pollInterval = null; }
+          // Refresh leads table, auto-switch to relevant filter
+          loadLeads().then(() => {
+            // Auto-switch to "Ready to Send" if there are drafted leads, or "Scheduled" if auto-scheduled
+            const readyCount = allLeads.filter(l => _leadCategory(l) === 'ready').length;
+            const schedCount = allLeads.filter(l => _leadCategory(l) === 'scheduled').length;
+            const targetFilter = schedCount > 0 ? 'scheduled' : readyCount > 0 ? 'ready' : 'all';
+            const targetBtn = document.querySelector(`#filterToggleGroup .btn-toggle[onclick*="'${targetFilter}'"]`);
+            if (targetBtn) setLeadFilter(targetFilter, targetBtn);
+          });
+          // Always check schedule status after processing
+          fetch('/api/schedule/status').then(r => r.json()).then(d => {
+            if (d.scheduledEmails && d.scheduledEmails.some(e => e.status === 'pending')) startSchedulePolling();
+          }).catch(() => {});
+          if (_runDeliveryMode === 'auto-schedule') startSchedulePolling();
+        } else {
+          badge.textContent = 'Idle';
+          badge.className = 'badge badge-idle';
+        }
+
+        const logContainer = document.getElementById('logContainer');
+        if (data.logs.length > 0) {
+          logContainer.innerHTML = data.logs.map(log => {
+            const msg = log.message || '';
+            if (msg.length > 120) {
+              const short = msg.substring(0, 117) + '...';
+              const escaped = msg.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+              return `<div class="log-line"><span class="log-ts">${log.time}</span><span class="log-msg clickable" onclick="openDetailModal('Log',\`${escaped}\`)">${short}</span></div>`;
+            }
+            return `<div class="log-line"><span class="log-ts">${log.time}</span><span class="log-msg">${msg}</span></div>`;
+          }).join('');
+          logContainer.scrollTop = logContainer.scrollHeight;
+        }
+      } catch (err) { console.error('Poll error:', err); }
+    }
+
+    function addLog(message) {
+      const logContainer = document.getElementById('logContainer');
+      const time = new Date().toLocaleTimeString();
+      const msg = message || '';
+      if (msg.length > 120) {
+        const short = msg.substring(0, 117) + '...';
+        const escaped = msg.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+        logContainer.innerHTML += `<div class="log-line"><span class="log-ts">${time}</span><span class="log-msg clickable" onclick="openDetailModal('Log',\`${escaped}\`)">${short}</span></div>`;
+      } else {
+        logContainer.innerHTML += `<div class="log-line"><span class="log-ts">${time}</span><span class="log-msg">${msg}</span></div>`;
+      }
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // Detail modal functions
+    function openDetailModal(title, content, isHtml = false) {
+      document.getElementById('detailModalTitle').textContent = title;
+      const body = document.getElementById('detailModalBody');
+      if (isHtml) {
+        body.innerHTML = content;
+        body.style.whiteSpace = 'normal';
+        body.style.fontFamily = 'inherit';
+        body.style.fontSize = '13px';
+      } else {
+        body.textContent = content;
+        body.style.whiteSpace = 'pre-wrap';
+        body.style.fontFamily = 'var(--font-mono)';
+        body.style.fontSize = '12px';
+      }
+      document.getElementById('detailModal').classList.add('open');
+    }
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('open');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetailModal(); });
+
+    // Parse email draft variants from a lead
+    function parseDraftVariants(lead) {
+      if (!lead || !lead.emailDraft) return [];
+      const variants = [];
+      try {
+        let raw = lead.emailDraft;
+        if (raw.startsWith('{')) {
+          const parsed = JSON.parse(raw);
+          if (parsed.variants) {
+            ['A', 'B', 'C'].forEach(key => {
+              if (parsed.variants[key] && parsed.variants[key].email) {
+                variants.push({
+                  key,
+                  strategy: parsed.variants[key].strategy || `Variant ${key}`,
+                  email: parsed.variants[key].email
+                });
+              }
+            });
+          }
+        }
+        if (variants.length === 0 && raw.trim()) {
+          variants.push({ key: 'A', strategy: 'Email', email: raw });
+        }
+      } catch(e) {
+        variants.push({ key: 'A', strategy: 'Email', email: lead.emailDraft });
+      }
+      return variants;
+    }
+
+    // Render email text as readable HTML
+    function renderEmailAsHtml(emailText) {
+      // Strip any HTML tags from the raw email text first
+      let clean = emailText.replace(/<[^>]*>/g, '');
+      // Extract subject and body
+      const lines = clean.trim().split('\n');
+      let subject = '';
+      let bodyStart = 0;
+      if (lines[0] && lines[0].toLowerCase().startsWith('subject:')) {
+        subject = lines[0].replace(/^subject:\s*/i, '').trim();
+        bodyStart = 1;
+        // Skip blank line after subject
+        if (lines[bodyStart] && lines[bodyStart].trim() === '') bodyStart++;
+      }
+      const body = lines.slice(bodyStart).join('\n').trim();
+
+      // Convert plain text to HTML paragraphs
+      const paragraphs = body.split(/\n\s*\n/).map(p => {
+        const escaped = p.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return `<p style="margin:0 0 12px 0;line-height:1.6;">${escaped.replace(/\n/g, '<br>')}</p>`;
+      }).join('');
+
+      let html = '';
+      if (subject) {
+        html += `<div style="font-size:14px;font-weight:600;color:var(--foreground);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);">Subject: ${subject.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+      }
+      html += `<div style="color:var(--foreground);font-size:13px;">${paragraphs}</div>`;
+      return html;
+    }
+
+    // View full draft in modal — shows tabs for multiple variants
+    function viewDraft(rowNumber) {
+      const lead = allLeads.find(l => l.rowNumber === rowNumber);
+      if (!lead || !lead.emailDraft) return;
+      const variants = parseDraftVariants(lead);
+      if (variants.length === 0) return;
+
+      let html = '';
+      // Label showing which variant is the Gmail draft
+      const activeVariant = variants[0];
+      html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 10px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.15);border-radius:var(--radius-xs);font-size:11px;color:var(--info);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Gmail draft uses: <strong>Variant ${activeVariant.key} — ${activeVariant.strategy}</strong>
+      </div>`;
+      if (variants.length > 1) {
+        // Tab bar — variant A is the active Gmail draft
+        html += `<div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:16px;">`;
+        variants.forEach((v, i) => {
+          const label = (v.strategy || 'Draft ' + v.key) + (i === 0 ? ' (Active)' : '');
+          html += `<button onclick="switchDraftTab(this, ${i})" class="draft-tab${i === 0 ? ' active' : ''}" style="padding:8px 16px;font-size:12px;font-weight:500;background:none;border:none;border-bottom:2px solid ${i === 0 ? 'var(--chart-2)' : 'transparent'};color:${i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)'};cursor:pointer;transition:all 0.15s;">${label}</button>`;
+        });
+        html += `</div>`;
+        // Tab contents
+        variants.forEach((v, i) => {
+          html += `<div class="draft-tab-content" style="${i > 0 ? 'display:none;' : ''}">${renderEmailAsHtml(v.email)}</div>`;
+        });
+      } else {
+        html += renderEmailAsHtml(variants[0].email);
+      }
+      openDetailModal(`${lead.company} — Email Draft`, html, true);
+    }
+
+    function switchDraftTab(btn, idx) {
+      const modal = btn.closest('.detail-modal-body');
+      modal.querySelectorAll('.draft-tab').forEach((t, i) => {
+        t.style.borderBottomColor = i === idx ? 'var(--chart-2)' : 'transparent';
+        t.style.color = i === idx ? 'var(--foreground)' : 'var(--muted-foreground)';
+        t.classList.toggle('active', i === idx);
+      });
+      modal.querySelectorAll('.draft-tab-content').forEach((c, i) => {
+        c.style.display = i === idx ? '' : 'none';
+      });
+    }
+
+    // ============ TOAST NOTIFICATIONS ============
+    function showToast(message, type = 'success', duration = 3000) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      const icons = {
+        success: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+        error: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+        info: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>'
+      };
+      toast.innerHTML = (icons[type] || icons.success) + `<span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('hiding');
+        setTimeout(() => toast.remove(), 280);
+      }, duration);
+    }
+
+    // ============ ROW ACTIONS DROPDOWN ============
+    function toggleRowActions(rowNumber, triggerEl) {
+      const dd = document.getElementById('actions-dd-' + rowNumber);
+      if (!dd) return;
+      const isOpen = dd.classList.contains('open');
+      closeAllRowActions();
+      if (!isOpen) {
+        // Move to body to escape any overflow:hidden / scroll containers
+        dd._originalParent = dd.parentNode;
+        document.body.appendChild(dd);
+        const rect = triggerEl.getBoundingClientRect();
+        const ddWidth = dd.offsetWidth || 168;
+        let left = rect.right - ddWidth;
+        if (left < 8) left = 8;
+        if (left + ddWidth > window.innerWidth - 8) left = window.innerWidth - ddWidth - 8;
+        let top = rect.bottom + 4;
+        // Flip up if not enough space below
+        if (top + 160 > window.innerHeight && rect.top > 180) {
+          top = rect.top - dd.offsetHeight - 4;
+        }
+        dd.style.top = top + 'px';
+        dd.style.left = left + 'px';
+        dd.style.right = 'auto';
+        dd.classList.add('open');
+      }
+    }
+    function closeAllRowActions() {
+      document.querySelectorAll('.row-actions-dropdown.open').forEach(d => {
+        d.classList.remove('open');
+        if (d._originalParent) {
+          d._originalParent.appendChild(d);
+          d._originalParent = null;
+        }
+        d.style.top = ''; d.style.left = ''; d.style.right = '';
+      });
+    }
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.row-actions-wrap')) closeAllRowActions();
+    });
+
+    // ============ ACTION CONFIRMATIONS ============
+    async function confirmSendNow(rowNumber) {
+      const lead = allLeads.find(l => l.rowNumber === rowNumber);
+      if (!lead) return;
+      const variants = parseDraftVariants(lead);
+
+      // Build modal content with variant previews
+      let modalBody = '';
+      if (variants.length > 1) {
+        modalBody += `<div style="margin-bottom:12px;color:var(--muted-foreground);font-size:12px;">Choose which draft to send to <strong style="color:var(--foreground);">${esc(lead.email)}</strong>:</div>`;
+        modalBody += `<div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:12px;">`;
+        variants.forEach((v, i) => {
+          modalBody += `<button onclick="switchSendTab(this, ${i})" class="draft-tab${i === 0 ? ' active' : ''}" style="padding:6px 14px;font-size:11px;font-weight:500;background:none;border:none;border-bottom:2px solid ${i === 0 ? 'var(--chart-2)' : 'transparent'};color:${i === 0 ? 'var(--foreground)' : 'var(--muted-foreground)'};cursor:pointer;transition:all 0.15s;">${v.strategy || 'Draft ' + v.key}</button>`;
+        });
+        modalBody += `</div>`;
+        variants.forEach((v, i) => {
+          modalBody += `<div class="send-tab-content" style="max-height:200px;overflow-y:auto;padding:8px;background:rgba(255,255,255,0.02);border-radius:var(--radius-xs);border:1px solid var(--border);margin-bottom:12px;${i > 0 ? 'display:none;' : ''}">${renderEmailAsHtml(v.email)}</div>`;
+        });
+        modalBody += `<input type="hidden" id="sendVariantChoice" value="${variants[0].key}">`;
+      } else {
+        modalBody += `<div style="margin-bottom:12px;">Send the draft email to <strong>${esc(lead.email)}</strong> for <strong>${esc(lead.company)}</strong> immediately?</div>`;
+        if (variants.length === 1) {
+          modalBody += `<div style="max-height:180px;overflow-y:auto;padding:8px;background:rgba(255,255,255,0.02);border-radius:var(--radius-xs);border:1px solid var(--border);margin-bottom:12px;">${renderEmailAsHtml(variants[0].email)}</div>`;
+        }
+      }
+      modalBody += `<span style="color:var(--warning);font-size:11px;">This cannot be undone.</span>`;
+
+      const ok = await openConfirmModal('Send Now', modalBody, 'Send Now');
+      if (!ok) return;
+
+      const variantKey = variants.length > 1 ? (document.getElementById('sendVariantChoice')?.value || 'A') : undefined;
+      try {
+        const res = await fetch('/api/send-now', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rowNumber, variantKey })
+        });
+        const data = await res.json();
+        if (data.error) { showToast('Send failed: ' + data.error, 'error'); return; }
+        showToast('Email sent to ' + lead.email, 'info');
+        loadLeads();
+      } catch (err) { showToast('Error: ' + err.message, 'error'); }
+    }
+
+    function switchSendTab(btn, idx) {
+      const modal = btn.closest('#confirmModalBody') || btn.closest('.detail-modal-body');
+      if (!modal) return;
+      const variants = parseDraftVariants(allLeads.find(l => l.rowNumber)); // fallback
+      modal.querySelectorAll('.draft-tab').forEach((t, i) => {
+        t.style.borderBottomColor = i === idx ? 'var(--chart-2)' : 'transparent';
+        t.style.color = i === idx ? 'var(--foreground)' : 'var(--muted-foreground)';
+        t.classList.toggle('active', i === idx);
+      });
+      modal.querySelectorAll('.send-tab-content').forEach((c, i) => {
+        c.style.display = i === idx ? '' : 'none';
+      });
+      const choice = modal.querySelector('#sendVariantChoice');
+      const tabs = modal.querySelectorAll('.draft-tab');
+      if (choice && tabs[idx]) {
+        // Map tab index to variant key (A, B, C)
+        choice.value = ['A', 'B', 'C'][idx] || 'A';
+      }
+    }
+
+    async function confirmRewrite(rowNumber) {
+      const lead = allLeads.find(l => l.rowNumber === rowNumber);
+      if (!lead) return;
+      const ok = await openConfirmModal(
+        'Rewrite Draft',
+        `Regenerate the email draft for <strong>${esc(lead.company)}</strong>? The current draft will be replaced.`,
+        'Rewrite'
+      );
+      if (!ok) return;
+      const btn = document.getElementById('redraft-' + rowNumber);
+      if (btn) { btn.disabled = true; btn.textContent = 'Rewriting...'; }
+      try {
+        const res = await fetch('/api/redraft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rowNumber })
+        });
+        const data = await res.json();
+        if (data.error) { showToast('Rewrite failed: ' + data.error, 'error'); return; }
+        showToast('Draft rewritten for ' + lead.company, 'success');
+        loadLeads();
+      } catch (err) { showToast('Error: ' + err.message, 'error'); }
+      finally { if (btn) { btn.disabled = false; btn.textContent = 'Rewrite'; } }
+    }
+
+    async function confirmCancelSchedule(rowNumber) {
+      const lead = allLeads.find(l => l.rowNumber === rowNumber);
+      if (!lead) return;
+      const ok = await openConfirmModal(
+        'Cancel Schedule',
+        `Cancel the scheduled send for <strong>${esc(lead.company)}</strong>? The draft will remain in Gmail but will not be sent automatically.`,
+        'Cancel Schedule'
+      );
+      if (!ok) return;
+      try {
+        const res = await fetch('/api/schedule/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company: lead.company })
+        });
+        const data = await res.json();
+        if (data.error) { showToast('Cancel failed: ' + data.error, 'error'); return; }
+        showToast('Schedule cancelled for ' + lead.company, 'success');
+        loadLeads();
+      } catch (err) { showToast('Error: ' + err.message, 'error'); }
+    }
+
+    async function confirmDeleteLead(rowNumber, company) {
+      const ok = await openConfirmModal(
+        'Delete Lead',
+        `Permanently delete <strong>${company}</strong> from the spreadsheet and this app? This cannot be undone.`,
+        'Delete'
+      );
+      if (!ok) return;
+      try {
+        const res = await fetch(`/api/leads/${rowNumber}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.error) { showToast('Delete failed: ' + data.error, 'error'); return; }
+        showToast(company + ' deleted', 'success');
+        loadLeads();
+      } catch (err) { showToast('Error: ' + err.message, 'error'); }
+    }
+
+    // Redraft a lead
+    async function redraftLead(rowNumber) {
+      const btn = document.getElementById('redraft-' + rowNumber);
+      if (btn) { btn.disabled = true; btn.textContent = 'Drafting...'; }
+      try {
+        const res = await fetch('/api/redraft', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rowNumber })
+        });
+        const data = await res.json();
+        if (data.error) {
+          alert('Redraft failed: ' + data.error);
+        } else {
+          addLog(`Redrafted row ${rowNumber}: ${data.subject || 'done'}`);
+          loadLeads(); // Refresh table
+        }
+      } catch (err) {
+        alert('Redraft error: ' + err.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Redraft'; }
+      }
+    }
+
+    // Format a scheduled time string for display in leads table — includes date
+    function formatLeadScheduledTime(timeStr) {
+      if (!timeStr) return '—';
+      try {
+        const date = new Date(timeStr);
+        if (isNaN(date.getTime())) {
+          return timeStr.length > 25 ? timeStr.substring(0, 25) + '...' : timeStr;
+        }
+        const tz = leadsTimezone;
+        const label = TIMEZONE_LABELS[tz] || tz.split('/').pop();
+        const now = new Date();
+        const isToday = date.toLocaleDateString('en-CA', { timeZone: tz }) === now.toLocaleDateString('en-CA', { timeZone: tz });
+        const tomorrow = new Date(now); tomorrow.setDate(tomorrow.getDate() + 1);
+        const isTomorrow = date.toLocaleDateString('en-CA', { timeZone: tz }) === tomorrow.toLocaleDateString('en-CA', { timeZone: tz });
+        const timeFmt = { hour: 'numeric', minute: '2-digit', hour12: true };
+        const timeStr2 = date.toLocaleString('en-US', { timeZone: tz, ...timeFmt });
+        const locLabel = (tz.split('/').pop() || tz).replace(/_/g, ' ');
+        if (isToday) return `Today ${timeStr2} ${locLabel}`;
+        if (isTomorrow) return `Tomorrow ${timeStr2} ${locLabel}`;
+        const dateFmt = { month: 'short', day: 'numeric' };
+        const dateStr = date.toLocaleString('en-US', { timeZone: tz, ...dateFmt });
+        return `${dateStr}, ${timeStr2} ${locLabel}`;
+      } catch (e) {
+        return timeStr.substring(0, 25);
+      }
+    }
+
+    // Edit scheduled time for a lead via modal with custom-select dropdowns
+    async function editScheduleTime(rowNumber, company, email) {
+      const lead = allLeads.find(l => l.rowNumber === rowNumber);
+      const currentTime = lead?.scheduledTime || '';
+      const tz = leadsTimezone;
+      const tzLabel = TIMEZONE_LABELS[tz] || tz;
+
+      // Parse current scheduled time into date/time parts
+      let curDate = '', curTime = '09:00';
+      try {
+        const d = new Date(currentTime);
+        if (!isNaN(d.getTime())) {
+          curDate = d.toLocaleDateString('en-CA', { timeZone: tz }); // YYYY-MM-DD
+          const h = parseInt(d.toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hour12: false }));
+          const m = parseInt(d.toLocaleString('en-US', { timeZone: tz, minute: '2-digit' }));
+          curTime = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+          // Snap to nearest 30-min
+          const mins = m < 15 ? '00' : m < 45 ? '30' : '00';
+          if (mins === '00' && m >= 45) curTime = String(h + 1).padStart(2, '0') + ':00';
+          else curTime = String(h).padStart(2, '0') + ':' + mins;
+        }
+      } catch (e) {}
+      if (!curDate) {
+        const now = new Date();
+        curDate = now.toLocaleDateString('en-CA', { timeZone: tz });
+      }
+
+      // Build date options (today + next 14 days)
+      const dateOptions = [];
+      const today = new Date();
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(today); d.setDate(d.getDate() + i);
+        const val = d.toLocaleDateString('en-CA', { timeZone: tz });
+        const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : d.toLocaleDateString('en-US', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' });
+        dateOptions.push({ value: val, label });
+      }
+
+      // Build time options (30-min intervals)
+      const timeOptions = [];
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m += 30) {
+          const val = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+          const hr12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+          const ampm = h < 12 ? 'AM' : 'PM';
+          timeOptions.push({ value: val, label: `${hr12}:${String(m).padStart(2, '0')} ${ampm}` });
+        }
+      }
+
+      const body =
+        `<div style="margin-bottom: 14px;">Reschedule email for <strong>${esc(company)}</strong></div>` +
+        `<div style="display:flex; gap:10px; margin-bottom: 6px;">` +
+          `<div style="flex:1;"><div style="font-size:11px; color:var(--muted-foreground); margin-bottom:4px;">Date</div>` +
+            `<div class="custom-select" id="reschedDateSelect" data-value="${curDate}"><div class="custom-select-trigger" tabindex="0"><span class="cs-label">${curDate}</span><svg class="cs-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="custom-select-dropdown"></div></div>` +
+          `</div>` +
+          `<div style="flex:1;"><div style="font-size:11px; color:var(--muted-foreground); margin-bottom:4px;">Time (${tzLabel})</div>` +
+            `<div class="custom-select" id="reschedTimeSelect" data-value="${curTime}"><div class="custom-select-trigger" tabindex="0"><span class="cs-label">${curTime}</span><svg class="cs-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg></div><div class="custom-select-dropdown"></div></div>` +
+          `</div>` +
+        `</div>` +
+        `<div style="font-size: 11px; color: var(--muted-foreground);">The email will be sent at the new time.</div>`;
+
+      // Open modal — init dropdowns right after it renders
+      const confirmPromise = openConfirmModal('Modify Schedule', body, 'Save');
+      // Init custom-selects inside the modal (runs synchronously after modal is shown)
+      requestAnimationFrame(() => {
+        csSetOptions('reschedDateSelect', dateOptions, curDate);
+        csSetOptions('reschedTimeSelect', timeOptions, curTime);
+        ['reschedDateSelect', 'reschedTimeSelect'].forEach(id => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          const trigger = sel.querySelector('.custom-select-trigger');
+          const dropdown = sel.querySelector('.custom-select-dropdown');
+          sel._dropdown = dropdown;
+          trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.querySelectorAll('.custom-select.open').forEach(s => { if (s !== sel) _csClose(s); });
+            if (sel.classList.contains('open')) { _csClose(sel); return; }
+            sel.classList.add('open');
+            document.body.appendChild(dropdown);
+            const rect = trigger.getBoundingClientRect();
+            dropdown.style.top = (rect.bottom + 4) + 'px';
+            dropdown.style.left = rect.left + 'px';
+            dropdown.style.width = rect.width + 'px';
+            dropdown.style.bottom = '';
+            const spaceBelow = window.innerHeight - rect.bottom - 8;
+            if (spaceBelow < 200 && rect.top > 200) {
+              dropdown.style.top = (rect.top - dropdown.scrollHeight - 4) + 'px';
+            }
+            const selected = dropdown.querySelector('.cs-option.selected');
+            if (selected) selected.scrollIntoView({ block: 'nearest' });
+          });
+          _csBindOptions(sel);
+        });
+      });
+
+      const confirmed = await confirmPromise;
+      if (!confirmed) return;
+
+      const newDate = csGetValue('reschedDateSelect');
+      const newTime = csGetValue('reschedTimeSelect');
+      if (!newDate || !newTime) return;
+
+      // Build ISO from date + time in user's timezone
+      const isoTime = new Date(`${newDate}T${newTime}:00`).toISOString();
+
+      try {
+        const res = await fetch('/api/schedule/reschedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company, newTime: isoTime })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          addLog(`Rescheduled ${company}: ${formatLeadScheduledTime(isoTime)}`);
+          await loadLeads();
+        } else {
+          addLog(`Reschedule failed: ${data.error || 'Unknown error'}`);
+        }
+      } catch (err) {
+        addLog(`Reschedule error: ${err.message}`);
+      }
+    }
+
+    // Load leads on init and poll status
+    loadLeads();
+    updateStatus();
+
+
+    // ============ SCHEDULED SENDING ============
+
+    let schedulePollInterval = null;
+    let schedulePreviewData = null;
+
+    const TIMEZONE_LABELS = {
+      'America/New_York': 'ET', 'America/Chicago': 'CT',
+      'America/Denver': 'MT', 'America/Los_Angeles': 'PT',
+      'America/Toronto': 'ET', 'America/Mexico_City': 'CST',
+      'America/Bogota': 'COT', 'America/Sao_Paulo': 'BRT',
+      'America/Argentina/Buenos_Aires': 'ART',
+      'Europe/London': 'GMT', 'Europe/Paris': 'CET',
+      'Europe/Berlin': 'CET', 'Europe/Madrid': 'CET',
+      'Europe/Rome': 'CET', 'Europe/Amsterdam': 'CET',
+      'Europe/Bucharest': 'EET', 'Europe/Moscow': 'MSK',
+      'Europe/Istanbul': 'TRT',
+      'Africa/Lagos': 'WAT', 'Africa/Cairo': 'EET',
+      'Africa/Johannesburg': 'SAST', 'Africa/Nairobi': 'EAT',
+      'Africa/Casablanca': 'WET',
+      'Asia/Dubai': 'GST', 'Asia/Kolkata': 'IST',
+      'Asia/Singapore': 'SGT', 'Asia/Shanghai': 'CST',
+      'Asia/Hong_Kong': 'HKT', 'Asia/Tokyo': 'JST',
+      'Asia/Seoul': 'KST', 'Asia/Bangkok': 'ICT',
+      'Asia/Jakarta': 'WIB',
+      'Australia/Sydney': 'AEST', 'Australia/Melbourne': 'AEST',
+      'Australia/Perth': 'AWST', 'Pacific/Auckland': 'NZST'
+    };
+
+    function getLocalTimezoneLabel() {
+      try {
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        return TIMEZONE_LABELS[tz] || tz.split('/').pop().replace('_', ' ');
+      } catch (e) { return 'Local'; }
+    }
+
+    function formatTimeInTimezone(isoString, timezone) {
+      if (!isoString) return { selected: 'N/A', local: 'N/A' };
+      const tz = timezone || 'America/New_York';
+      const label = TIMEZONE_LABELS[tz] || tz;
+      const localLabel = getLocalTimezoneLabel();
+      const date = new Date(isoString);
+      const fmt = { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+      const selectedTime = date.toLocaleString('en-US', { timeZone: tz, ...fmt });
+      const localTime = date.toLocaleString('en-US', fmt);
+      return {
+        selected: `${selectedTime} ${label}`,
+        local: `${localTime} ${localLabel}`
+      };
+    }
+
+    // Populate date & time custom selects
+    (function() {
+      // -- Date: next 14 days --
+      const dateOpts = [];
+      const today = new Date();
+      const dayNames = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      for (let i = 0; i < 14; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() + i);
+        const val = d.toISOString().slice(0, 10);
+        const prefix = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : dayNames[d.getDay()];
+        const label = `${prefix}, ${monthNames[d.getMonth()]} ${d.getDate()}`;
+        dateOpts.push({ value: val, label });
+      }
+      csSetOptions('scheduleDateSelect', dateOpts, dateOpts[0].value);
+
+      // -- Time slots: 30-min increments --
+      function buildTimeOptions() {
+        const opts = [];
+        for (let h = 0; h < 24; h++) {
+          for (let m = 0; m < 60; m += 30) {
+            const val = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+            const hr12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+            const ampm = h < 12 ? 'AM' : 'PM';
+            const label = `${hr12}:${String(m).padStart(2,'0')} ${ampm}`;
+            opts.push({ value: val, label });
+          }
+        }
+        return opts;
+      }
+      const timeOpts = buildTimeOptions();
+
+      // Start time: round up to next 30-min slot
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      const startMin = Math.ceil(now.getMinutes() / 30) * 30;
+      const startHr = startMin >= 60 ? now.getHours() + 1 : now.getHours();
+      const startVal = String(startHr % 24).padStart(2,'0') + ':' + String(startMin % 60).padStart(2,'0');
+      csSetOptions('startTimeSelect', timeOpts, startVal || '09:00');
+      csSetOptions('endTimeSelect', timeOpts, '17:00');
+    })();
+
+    // Check for existing scheduled emails on load
+    document.addEventListener('DOMContentLoaded', async function() {
+      await checkForExistingScheduledEmails();
+      await checkRecoveryStatus();
+    });
+
+    async function checkForExistingScheduledEmails() {
+      try {
+        const res = await fetch('/api/schedule/status');
+        const data = await res.json();
+        const hasPending = data.scheduledEmails && data.scheduledEmails.some(e => e.status === 'pending');
+        if (hasPending) {
+          startSchedulePolling();
+          console.log(`[Schedule] Restored: ${data.scheduledEmails.filter(e => e.status === 'pending').length} pending email(s)`);
+        }
+      } catch (err) { console.error(err); }
+    }
+
+    async function checkRecoveryStatus() {
+      try {
+        const res = await fetch('/api/schedule/recovery');
+        const data = await res.json();
+        if (!data.lastRecovery) return;
+        const total = (data.recovered || 0) + (data.rescheduled || 0) + (data.expired || 0);
+        if (total === 0) return;
+
+        if (data.recovered > 0 && data.rescheduled === 0 && data.expired === 0) {
+          showToast(`Schedule recovered: ${data.recovered} email(s) restored`, 'success', 5000);
+          startSchedulePolling();
+          return;
+        }
+
+        const summary = [];
+        if (data.recovered > 0) summary.push(`${data.recovered} restored`);
+        if (data.rescheduled > 0) summary.push(`${data.rescheduled} rescheduled`);
+        if (data.expired > 0) summary.push(`${data.expired} expired`);
+        showToast(`Schedule recovery: ${summary.join(', ')}`, 'info', 6000);
+
+        if (data.recovered > 0 || data.rescheduled > 0) startSchedulePolling();
+      } catch (error) { console.error(error); }
+    }
+
+    function renderScheduleTable() { /* Schedule tab removed — status shown inline */ }
+
+    async function stopSchedule() {
+      try {
+        const res = await fetch('/api/schedule/stop', { method: 'POST' });
+        const data = await res.json();
+        showToast(data.message || 'Schedule stopped', 'info');
+        updateSidebarStatus('Idle', 'gray');
+        updateScheduleStatus();
+      } catch (err) { showToast('Error stopping schedule', 'error'); }
+    }
+
+    function startSchedulePolling() {
+      if (schedulePollInterval) return;
+      schedulePollInterval = setInterval(updateScheduleStatus, 5000);
+      updateScheduleStatus();
+    }
+
+    async function updateScheduleStatus() {
+      try {
+        const res = await fetch('/api/schedule/status');
+        const data = await res.json();
+
+        const hasPending = data.scheduledEmails && data.scheduledEmails.some(e => e.status === 'pending');
+        if (hasPending) {
+          // Patch time spans in-place — no full table re-render
+          patchScheduledTimeSpans(data.scheduledEmails);
+        }
+        if (!hasPending && schedulePollInterval) {
+          clearInterval(schedulePollInterval);
+          schedulePollInterval = null;
+          updateSidebarStatus('Idle', 'gray');
+          // Only do a full reload when the schedule ends (something was sent/cancelled)
+          loadLeads();
+        }
+      } catch (err) { console.error('Schedule poll error:', err); }
+    }
+
+    // Update only the scheduled-time cells in the table, no full re-render
+    function patchScheduledTimeSpans(scheduledEmails) {
+      for (const lead of allLeads) {
+        const mem = scheduledEmails.find(s =>
+          s.status === 'pending' && (
+            (s.ceoEmail && s.ceoEmail.toLowerCase() === (lead.email || '').toLowerCase()) ||
+            (s.company && s.company.toLowerCase() === (lead.company || '').toLowerCase())
+          )
+        );
+        if (!mem) continue;
+        const span = document.getElementById('sched-' + lead.rowNumber);
+        if (span && mem.scheduledTime) {
+          const formatted = formatLeadScheduledTime(mem.scheduledTime);
+          if (span.textContent !== formatted) span.textContent = formatted;
+        }
+      }
+    }
+
+    async function cancelScheduledEmail(company) {
+      try {
+        const res = await fetch('/api/schedule/cancel', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ company })
+        });
+        const data = await res.json();
+        if (res.ok) { showToast(`Cancelled: ${company}`, 'success'); loadLeads(); }
+        else { showToast(`Error cancelling ${company}: ${data.error || 'Unknown error'}`, 'error'); }
+      } catch (err) { showToast(`Error: ${err.message}`, 'error'); }
+    }
+
+    function addScheduleLog(message) {
+      // Schedule tab removed — log to console
+      console.log('[Schedule]', message);
+    }
+  </script>
+</body>
+</html>
